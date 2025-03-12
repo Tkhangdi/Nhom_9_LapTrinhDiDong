@@ -14,7 +14,33 @@ class GioHang extends StatefulWidget {
 }
 
 class _GioHangState extends State<GioHang> {
-  List<SanPhamGio> danhSachSanPham = []; // Danh sách sản phẩm trong giỏ
+  List<SanPhamGio> danhSachSanPham = [
+    SanPhamGio(
+      sanPham: DongHo(
+        id: "SP001",
+        ten: "Đồng Hồ Rolex",
+        thuongHieu: "Rolex",
+        gia: 5000.0,
+        hinhAnh: "https://example.com/rolex.png",
+        moTa: "Đồng hồ Rolex sang trọng, chất lượng cao.",
+        soLuong: 10,
+      ),
+      soLuong: 1,
+    ),
+    SanPhamGio(
+      sanPham: DongHo(
+        id: "SP002",
+        ten: "Đồng Hồ Omega",
+        thuongHieu: "Omega",
+        gia: 4000.0,
+        hinhAnh: "https://example.com/omega.png",
+        moTa: "Đồng hồ Omega bền bỉ, đẳng cấp.",
+        soLuong: 5,
+      ),
+      soLuong: 1,
+    ),
+  ];
+
   bool isAllSelected = false; // Kiểm tra xem tất cả sản phẩm có được chọn không
 
   // Thêm sản phẩm vào giỏ

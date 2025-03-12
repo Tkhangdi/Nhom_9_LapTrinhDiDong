@@ -1,5 +1,6 @@
 import 'package:shop_ban_dong_ho/models/KhachHang.dart';
 import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
+import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/utils/data.dart';
 import 'package:flutter/material.dart';
 
@@ -20,28 +21,21 @@ class _SignUpPageState extends State<DangKy> {
 
   // Validations
 
-  // Email validation (must be a valid gmail.com address)
   bool isValidEmail(String email) {
     final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$');
     return regex.hasMatch(email);
   }
 
-  // Phone number validation (basic format: 10 digits)
   bool isValidPhone(String phone) {
-    // Biểu thức chính quy kiểm tra số điện thoại hợp lệ
-    final regex = RegExp(
-      r'^(0[3-9])\d{8}$',
-    ); // Số bắt đầu với 0 và một trong các số 3, 4, 5, 7, 8, 9, và theo sau là 8 chữ số
+    final regex = RegExp(r'^(0[3-9])\d{8}$');
     return regex.hasMatch(phone);
   }
 
-  // Password validation (at least 6 characters, including 1 uppercase, 1 lowercase, and 1 number)
   bool isValidPassword(String password) {
     final regex = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,}$');
     return regex.hasMatch(password);
   }
 
-  // Birthdate validation (check age is at least 16)
   bool isValidBirthdate(String birthdate) {
     try {
       DateTime birthDateTime = DateTime.parse(birthdate);
@@ -58,7 +52,6 @@ class _SignUpPageState extends State<DangKy> {
     }
   }
 
-  // Check if email already exists in the database
   Future<bool> isEmailUnique(String email) async {
     DuLieu db = DuLieu();
     var existingUsers = await db.getUsersByEmail(email);
@@ -67,7 +60,6 @@ class _SignUpPageState extends State<DangKy> {
 
   void _signUp() async {
     if (_formkey.currentState!.validate()) {
-      // Kiểm tra các trường hợp
       String? validationMessage = await _validateFields();
       if (validationMessage != null) {
         ScaffoldMessenger.of(
@@ -76,11 +68,9 @@ class _SignUpPageState extends State<DangKy> {
         return;
       }
 
-      // Tạo ID người dùng
       String userId =
           'KH${DateTime.now().day.toString().padLeft(2, '0')}${DateTime.now().month.toString().padLeft(2, '0')}${DateTime.now().year.toString().substring(2)}01';
 
-      // Tạo đối tượng người dùng
       KhachHang user = KhachHang(
         id: userId,
         name: namecontroller.text,
@@ -92,12 +82,10 @@ class _SignUpPageState extends State<DangKy> {
         address: addresscontroller.text,
       );
 
-      // Thực hiện đăng ký
       try {
         DuLieu db = DuLieu();
         await db.insertUser(user.toMap());
 
-        // Thông báo thành công và chuyển hướng
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Đăng ký thành công! Bạn có thể đăng nhập ngay'),
@@ -108,7 +96,6 @@ class _SignUpPageState extends State<DangKy> {
           MaterialPageRoute(builder: (context) => DangNhap()),
         );
       } catch (e) {
-        // Xử lý lỗi
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -121,39 +108,31 @@ class _SignUpPageState extends State<DangKy> {
     }
   }
 
-  // Hàm kiểm tra tất cả các trường hợp
   Future<String?> _validateFields() async {
-    // Kiểm tra email hợp lệ
     if (!isValidEmail(mailcontroller.text)) {
       return 'Email phải có định dạng đúng, ví dụ: abc@gmail.com';
     }
 
-    // Kiểm tra email có duy nhất không (bất đồng bộ)
     bool emailUnique = await isEmailUnique(mailcontroller.text);
     if (!emailUnique) {
       return 'Email này đã được sử dụng! Vui lòng chọn email khác';
     }
 
-    // Kiểm tra mật khẩu hợp lệ
     if (!isValidPassword(passwordcontroller.text)) {
       return 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ hoa, 1 chữ thường và 1 số.';
     }
 
-    // Kiểm tra ngày sinh hợp lệ
     if (!isValidBirthdate(birthdatecontroller.text)) {
       return 'Bạn phải ít nhất 16 tuổi để đăng ký!';
     }
 
-    // Kiểm tra số điện thoại hợp lệ
     if (!isValidPhone(phonecontroller.text)) {
       return 'Số điện thoại không hợp lệ. Vui lòng nhập đủ 10 chữ số.';
     }
 
-    // Nếu tất cả kiểm tra hợp lệ
     return null;
   }
 
-  // Select birthdate
   Future<void> _selectBirthdate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
@@ -163,8 +142,7 @@ class _SignUpPageState extends State<DangKy> {
     );
     if (selectedDate != null) {
       setState(() {
-        birthdatecontroller.text =
-            "${selectedDate.toLocal()}".split(' ')[0]; // yyyy-mm-dd format
+        birthdatecontroller.text = "${selectedDate.toLocal()}".split(' ')[0];
       });
     }
   }
@@ -172,12 +150,14 @@ class _SignUpPageState extends State<DangKy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: [
               SizedBox(height: MediaQuery.of(context).size.height / 10),
+
               Center(
                 child: Image.asset(
                   "assets/logo.jpg",
@@ -188,19 +168,14 @@ class _SignUpPageState extends State<DangKy> {
               ),
               SizedBox(height: 50.0),
               Material(
-                elevation: 10.0, // Thêm hiệu ứng shadow
-                borderRadius: BorderRadius.circular(
-                  25,
-                ), // Bo góc cho Container chính
+                elevation: 10.0,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 1.8,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(
-                      25,
-                    ), // Bo góc cho Container
+                    color: AppColors.background,
+                    // Removed borderRadius
                   ),
                   child: Form(
                     key: _formkey,
@@ -212,7 +187,7 @@ class _SignUpPageState extends State<DangKy> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF0E64D1),
+                            color: AppColors.primary,
                           ),
                         ),
                         SizedBox(height: 30.0),
@@ -242,20 +217,19 @@ class _SignUpPageState extends State<DangKy> {
                         SizedBox(height: 40.0),
                         _buildSignUpButton(),
                         SizedBox(height: 20.0),
-                        // Thêm phần chuyển về màn hình đăng nhập
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DangNhap(),
-                              ), // Chuyển về màn hình đăng nhập
+                              ),
                             );
                           },
                           child: Text(
                             "Đã có tài khoản? Đăng nhập",
                             style: TextStyle(
-                              color: Color(0xFF0E64D1), // Màu sắc cho liên kết
+                              color: AppColors.textSecondary,
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),
@@ -273,7 +247,6 @@ class _SignUpPageState extends State<DangKy> {
     );
   }
 
-  // TextField builder để tái sử dụng cho các trường nhập liệu
   Widget _buildTextField(
     TextEditingController controller,
     String hintText,
@@ -293,23 +266,18 @@ class _SignUpPageState extends State<DangKy> {
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hintText,
-          prefixIcon: Icon(icon, color: Color(0xFF0E64D1)),
+          prefixIcon: Icon(icon, color: AppColors.primary),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(
-              15,
-            ), // Bo góc cho trường nhập liệu
-            borderSide: BorderSide(color: Color(0xFF0E64D1), width: 1),
+            borderSide: BorderSide(color: AppColors.primary, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Color(0xFF0E64D1), width: 2),
+            borderSide: BorderSide(color: AppColors.primary, width: 2),
           ),
         ),
       ),
     );
   }
 
-  // Dropdown button cho lựa chọn giới tính
   Widget _buildDropdown() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
@@ -317,10 +285,9 @@ class _SignUpPageState extends State<DangKy> {
         value: _selectedGender,
         decoration: InputDecoration(
           labelText: 'Giới tính',
-          labelStyle: TextStyle(color: Color(0xFF0E64D1)),
+          labelStyle: TextStyle(color: AppColors.primary),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Color(0xFF0E64D1), width: 1),
+            borderSide: BorderSide(color: AppColors.primary, width: 1),
           ),
         ),
         onChanged: (String? newValue) {
@@ -338,7 +305,6 @@ class _SignUpPageState extends State<DangKy> {
     );
   }
 
-  // Trường nhập ngày sinh
   Widget _buildBirthdateField() {
     return GestureDetector(
       onTap: () => _selectBirthdate(context),
@@ -353,10 +319,9 @@ class _SignUpPageState extends State<DangKy> {
           },
           decoration: InputDecoration(
             hintText: 'Ngày sinh',
-            prefixIcon: Icon(Icons.calendar_today, color: Color(0xFF0E64D1)),
+            prefixIcon: Icon(Icons.calendar_today, color: AppColors.primary),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: Color(0xFF0E64D1), width: 1),
+              borderSide: BorderSide(color: AppColors.primary, width: 1),
             ),
           ),
         ),
@@ -364,20 +329,15 @@ class _SignUpPageState extends State<DangKy> {
     );
   }
 
-  // Nút đăng ký
   Widget _buildSignUpButton() {
     return GestureDetector(
       onTap: _signUp,
       child: Material(
         elevation: 5.0,
-        borderRadius: BorderRadius.circular(25), // Bo góc cho nút
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12.0),
           width: 200,
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 167, 192, 224),
-            borderRadius: BorderRadius.circular(25), // Bo góc cho nút
-          ),
+          decoration: BoxDecoration(color: AppColors.primary),
           child: Center(
             child: Text(
               "Đăng Ký",

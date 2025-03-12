@@ -2,6 +2,7 @@ import 'package:shop_ban_dong_ho/main.dart';
 import 'package:shop_ban_dong_ho/screens/dangky.dart';
 import 'package:shop_ban_dong_ho/screens/quenmatkhau.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -72,7 +73,7 @@ class _LogInState extends State<DangNhap> {
     return TextStyle(
       fontSize: 16.0,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.textPrimary,
     );
   }
 
@@ -80,7 +81,7 @@ class _LogInState extends State<DangNhap> {
     return TextStyle(
       fontSize: 24.0,
       fontWeight: FontWeight.bold,
-      color: Colors.black,
+      color: AppColors.textPrimary,
     );
   }
 
@@ -97,7 +98,7 @@ class _LogInState extends State<DangNhap> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF00C853), Color(0xFF00B14E)],
+                  colors: [AppColors.primary, AppColors.primary],
                 ),
               ),
             ),
@@ -221,7 +222,9 @@ class _LogInState extends State<DangNhap> {
                                       // ignore: use_build_context_synchronously
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => MyButtonNavigationBar(),
+                                        builder:
+                                            (context) =>
+                                                MyButtonNavigationBar(),
                                       ),
                                     );
                                   } else {
@@ -242,7 +245,7 @@ class _LogInState extends State<DangNhap> {
                                   padding: EdgeInsets.symmetric(vertical: 8.0),
                                   width: 200,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF00C853),
+                                    color: AppColors.primary,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Center(
