@@ -1,6 +1,6 @@
-import 'package:shop_ban_dong_ho/dangky.dart';
-import 'package:shop_ban_dong_ho/quenmatkhau.dart';
-import 'package:shop_ban_dong_ho/trangchu.dart';
+import 'package:shop_ban_dong_ho/main.dart';
+import 'package:shop_ban_dong_ho/screens/dangky.dart';
+import 'package:shop_ban_dong_ho/screens/quenmatkhau.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -221,7 +221,7 @@ class _LogInState extends State<DangNhap> {
                                       // ignore: use_build_context_synchronously
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => TrangChu(),
+                                        builder: (context) => MyButtonNavigationBar(),
                                       ),
                                     );
                                   } else {

@@ -1,4 +1,4 @@
-import 'package:shop_ban_dong_ho/dangnhap.dart';
+import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart'; // Dùng thư viện SQLite
 import 'package:path/path.dart'; // Dùng để tạo đường dẫn cho cơ sở dữ liệu

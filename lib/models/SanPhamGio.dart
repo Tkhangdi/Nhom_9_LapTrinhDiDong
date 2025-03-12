@@ -1,4 +1,4 @@
-import 'package:shop_ban_dong_ho/DongHo.dart';
+import 'package:shop_ban_dong_ho/models/DongHo.dart';
 
 class SanPhamGio {
   final DongHo sanPham; // Sản phẩm từ lớp DongHo

@@ -1,41 +1,86 @@
-
-import 'package:shop_ban_dong_ho/trangchu.dart';
-
 import 'package:flutter/material.dart';
+import 'package:shop_ban_dong_ho/screens/Favorite.dart';
+import 'package:shop_ban_dong_ho/screens/GioHang.dart';
+import 'package:shop_ban_dong_ho/screens/Info.dart';
+import 'package:shop_ban_dong_ho/screens/trangchu.dart';
+import 'package:shop_ban_dong_ho/utils/app_colors.dart';
+import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
+import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
+import 'package:shop_ban_dong_ho/widgets/Appbar/appBarInfo.dart';
+import 'package:shop_ban_dong_ho/widgets/Appbar/appBarShopping_cart.dart';
+import 'package:shop_ban_dong_ho/widgets/headerparts.dart';
 
 void main() {
   runApp(const MyApp());
-  // runApp(const DangNhap());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Do An',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      title: "APP BAN DONG HO",
+      debugShowCheckedModeBanner: false,
+      home: MyButtonNavigationBar(),
+    );
+  }
+}
+
+class MyButtonNavigationBar extends StatefulWidget {
+  const MyButtonNavigationBar({super.key});
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _MyButtonNavigationBar();
+  }
+}
+
+class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
+  int _selectedIndex = 0;
+  static const List<Widget> _widgetOptions = <Widget>[
+    TrangChu(),
+    Favorite(),
+    GioHang(),
+    Info(),
+  ];
+  static const List<PreferredSizeWidget> _widgetAppbar = <PreferredSizeWidget>[
+    Appbarhome(),
+    Appbarfavorite(),
+    AppbarshoppingCart(),
+    Appbarinfo(),
+  ];
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _widgetAppbar.elementAt(_selectedIndex),
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: ''),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart_outlined),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_2_outlined),
+            label: '',
+          ),
+        ],
+        backgroundColor: AppColors.background,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.secondary,
+        showSelectedLabels: false, // Ẩn label khi chọn
+        showUnselectedLabels: false, // Ẩn label khi chưa chọn
+        onTap: _onItemTapped,
+        currentIndex: _selectedIndex,
       ),
-      home: TrangChu(),
-      //  home: DangNhap(),
     );
   }
 }

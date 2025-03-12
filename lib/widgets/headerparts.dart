@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'GioHang.dart'; // Import your Cart screen here
+import '../screens/gioHang.dart'; // Import your Cart screen here
 
 class HeaderParts extends StatefulWidget {
   const HeaderParts({super.key});

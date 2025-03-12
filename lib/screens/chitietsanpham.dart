@@ -1,6 +1,6 @@
-import 'package:shop_ban_dong_ho/GioHang.dart';
+import 'package:shop_ban_dong_ho/screens/gioHang.dart';
 import 'package:flutter/material.dart';
-import 'DongHo.dart';
+import '../models/DongHo.dart';
 
 class ChiTietSanPham extends StatefulWidget {
   const ChiTietSanPham({super.key, required this.dh});

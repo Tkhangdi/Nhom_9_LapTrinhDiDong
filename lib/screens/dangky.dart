@@ -1,6 +1,6 @@
-import 'package:shop_ban_dong_ho/KhachHang.dart';
-import 'package:shop_ban_dong_ho/dangnhap.dart';
-import 'package:shop_ban_dong_ho/data.dart';
+import 'package:shop_ban_dong_ho/models/KhachHang.dart';
+import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
+import 'package:shop_ban_dong_ho/utils/data.dart';
 import 'package:flutter/material.dart';
 
 class DangKy extends StatefulWidget {
