@@ -28,22 +28,22 @@ class _LogInState extends State<DangNhap> {
     super.dispose();
   }
 
-  bool isValidEmail(String email) {
+  bool KiemTraEmail(String email) {
     final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$');
     return regex.hasMatch(email);
   }
 
-  bool isValidPassword(String password) {
+  bool KiemTraMatKhau(String password) {
     final regex = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,}$');
     return regex.hasMatch(password);
   }
 
   Future<bool> userLogin() async {
-    if (!isValidEmail(email)) {
+    if (!KiemTraEmail(email)) {
       return false; // If email is invalid
     }
 
-    if (!isValidPassword(password)) {
+    if (!KiemTraMatKhau(password)) {
       return false; // If password is invalid
     }
 
@@ -123,7 +123,7 @@ class _LogInState extends State<DangNhap> {
                 children: [
                   Center(
                     child: Image.asset(
-                      "assets/logo.jpg",
+                      "assets/images/Logo.jpg",
                       width:
                           MediaQuery.of(context).size.width /
                           2, // Giảm kích thước width
@@ -150,7 +150,7 @@ class _LogInState extends State<DangNhap> {
                         child: Column(
                           children: [
                             SizedBox(height: 30.0),
-                            Text("Đăng nhập", style: headlineTextFeildStyle()),
+                            Text("ĐĂNG NHẬP", style: headlineTextFeildStyle()),
                             SizedBox(height: 30.0),
                             TextFormField(
                               controller: useremailcontroller,
@@ -158,7 +158,7 @@ class _LogInState extends State<DangNhap> {
                                 if (value == null || value.isEmpty) {
                                   return 'Vui lòng nhập email';
                                 }
-                                if (!isValidEmail(value)) {
+                                if (!KiemTraEmail(value)) {
                                   return 'Email không hợp lệ';
                                 }
                                 return null;
@@ -176,7 +176,7 @@ class _LogInState extends State<DangNhap> {
                                 if (value == null || value.isEmpty) {
                                   return 'Vui lòng nhập mật khẩu';
                                 }
-                                if (!isValidPassword(value)) {
+                                if (!KiemTraMatKhau(value)) {
                                   return 'Mật khẩu phải có ít nhất một chữ hoa, một chữ thường và một chữ số';
                                 }
                                 return null;

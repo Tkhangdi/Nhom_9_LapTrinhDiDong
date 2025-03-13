@@ -1,35 +1,35 @@
 class KhachHang {
   String id;
-  String name;
+  String hotenkh;
   String email;
   String password;
-  String gender;
-  String birthdate;
-  String phone;
-  String address;
+  String gioitinh;
+  String ngaysinh;
+  String sdt;
+  String diachi;
 
   KhachHang({
     required this.id,
-    required this.name,
+    required this.hotenkh,
     required this.email,
     required this.password,
-    required this.gender,
-    required this.birthdate,
-    required this.phone,
-    required this.address,
+    required this.gioitinh,
+    required this.ngaysinh,
+    required this.sdt,
+    required this.diachi,
   });
 
   // Convert KhachHang object to a Map (for storing in a database)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'name': name,
+      'hotenkh': hotenkh,
       'email': email,
       'password': password,
-      'gender': gender,
-      'birthdate': birthdate,
-      'phone': phone,
-      'address': address,
+      'gioitinh': gioitinh,
+      'ngaysinh': ngaysinh,
+      'sdt': sdt,
+      'diachi': diachi,
     };
   }
 
@@ -37,13 +37,13 @@ class KhachHang {
   factory KhachHang.fromMap(Map<String, dynamic> map) {
     return KhachHang(
       id: map['id'],
-      name: map['name'],
+      hotenkh: map['hotenkh'],
       email: map['email'],
       password: map['password'],
-      gender: map['gender'],
-      birthdate: map['birthdate'],
-      phone: map['phone'],
-      address: map['address'],
+      gioitinh: map['gioitinh'],
+      ngaysinh: map['ngaysinh'],
+      sdt: map['sdt'],
+      diachi: map['diachi'],
     );
   }
 }

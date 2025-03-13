@@ -6,44 +6,41 @@ import 'package:flutter/material.dart';
 
 class DangKy extends StatefulWidget {
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  _DangKyState createState() => _DangKyState();
 }
 
-class _SignUpPageState extends State<DangKy> {
-  final _formkey = GlobalKey<FormState>();
-  final TextEditingController namecontroller = TextEditingController();
-  final TextEditingController mailcontroller = TextEditingController();
-  final TextEditingController passwordcontroller = TextEditingController();
-  final TextEditingController birthdatecontroller = TextEditingController();
-  final TextEditingController phonecontroller = TextEditingController();
-  final TextEditingController addresscontroller = TextEditingController();
-  String _selectedGender = 'Nam'; // Default gender
+class _DangKyState extends State<DangKy> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController hotenkhController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController ngaysinhController = TextEditingController();
+  final TextEditingController sdtController = TextEditingController();
+  final TextEditingController diachiController = TextEditingController();
+  String _selectedgioitinh = 'Nam';
 
-  // Validations
-
-  bool isValidEmail(String email) {
+  bool KiemTraEmail(String email) {
     final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$');
     return regex.hasMatch(email);
   }
 
-  bool isValidPhone(String phone) {
+  bool KiemTraSDT(String sdt) {
     final regex = RegExp(r'^(0[3-9])\d{8}$');
-    return regex.hasMatch(phone);
+    return regex.hasMatch(sdt);
   }
 
-  bool isValidPassword(String password) {
+  bool KiemTraMatKhau(String password) {
     final regex = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,}$');
     return regex.hasMatch(password);
   }
 
-  bool isValidBirthdate(String birthdate) {
+  bool KiemTraNgaySinh(String ngaysinh) {
     try {
-      DateTime birthDateTime = DateTime.parse(birthdate);
+      DateTime ngaysinhTime = DateTime.parse(ngaysinh);
       DateTime today = DateTime.now();
-      int age = today.year - birthDateTime.year;
-      if (today.month < birthDateTime.month ||
-          (today.month == birthDateTime.month &&
-              today.day < birthDateTime.day)) {
+      int age = today.year - ngaysinhTime.year;
+      if (today.month < ngaysinhTime.month ||
+          (today.month == ngaysinhTime.month && today.day < ngaysinhTime.day)) {
         age--;
       }
       return age >= 16;
@@ -58,8 +55,8 @@ class _SignUpPageState extends State<DangKy> {
     return existingUsers.isEmpty;
   }
 
-  void _signUp() async {
-    if (_formkey.currentState!.validate()) {
+  Future<void> _signUp() async {
+    if (_formKey.currentState!.validate()) {
       String? validationMessage = await _validateFields();
       if (validationMessage != null) {
         ScaffoldMessenger.of(
@@ -73,19 +70,18 @@ class _SignUpPageState extends State<DangKy> {
 
       KhachHang user = KhachHang(
         id: userId,
-        name: namecontroller.text,
-        email: mailcontroller.text,
-        password: passwordcontroller.text,
-        gender: _selectedGender,
-        birthdate: birthdatecontroller.text,
-        phone: phonecontroller.text,
-        address: addresscontroller.text,
+        hotenkh: hotenkhController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        gioitinh: _selectedgioitinh,
+        ngaysinh: ngaysinhController.text,
+        sdt: sdtController.text,
+        diachi: diachiController.text,
       );
 
       try {
         DuLieu db = DuLieu();
         await db.insertUser(user.toMap());
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Đăng ký thành công! Bạn có thể đăng nhập ngay'),
@@ -109,31 +105,31 @@ class _SignUpPageState extends State<DangKy> {
   }
 
   Future<String?> _validateFields() async {
-    if (!isValidEmail(mailcontroller.text)) {
+    if (!KiemTraEmail(emailController.text)) {
       return 'Email phải có định dạng đúng, ví dụ: abc@gmail.com';
     }
 
-    bool emailUnique = await isEmailUnique(mailcontroller.text);
+    bool emailUnique = await isEmailUnique(emailController.text);
     if (!emailUnique) {
       return 'Email này đã được sử dụng! Vui lòng chọn email khác';
     }
 
-    if (!isValidPassword(passwordcontroller.text)) {
+    if (!KiemTraMatKhau(passwordController.text)) {
       return 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ hoa, 1 chữ thường và 1 số.';
     }
 
-    if (!isValidBirthdate(birthdatecontroller.text)) {
+    if (!KiemTraNgaySinh(ngaysinhController.text)) {
       return 'Bạn phải ít nhất 16 tuổi để đăng ký!';
     }
 
-    if (!isValidPhone(phonecontroller.text)) {
+    if (!KiemTraSDT(sdtController.text)) {
       return 'Số điện thoại không hợp lệ. Vui lòng nhập đủ 10 chữ số.';
     }
 
     return null;
   }
 
-  Future<void> _selectBirthdate(BuildContext context) async {
+  Future<void> _selectngaysinh(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -142,109 +138,9 @@ class _SignUpPageState extends State<DangKy> {
     );
     if (selectedDate != null) {
       setState(() {
-        birthdatecontroller.text = "${selectedDate.toLocal()}".split(' ')[0];
+        ngaysinhController.text = "${selectedDate.toLocal()}".split(' ')[0];
       });
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height / 10),
-
-              Center(
-                child: Image.asset(
-                  "assets/logo.jpg",
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: 150,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              SizedBox(height: 50.0),
-              Material(
-                elevation: 10.0,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 1.8,
-                  decoration: BoxDecoration(
-                    color: AppColors.background,
-                    // Removed borderRadius
-                  ),
-                  child: Form(
-                    key: _formkey,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 30.0),
-                        Text(
-                          "Sign up",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(height: 30.0),
-                        _buildTextField(
-                          namecontroller,
-                          'Tên',
-                          Icons.person_outlined,
-                        ),
-                        _buildTextField(
-                          mailcontroller,
-                          'Email',
-                          Icons.email_outlined,
-                        ),
-                        _buildTextField(
-                          passwordcontroller,
-                          'Mật khẩu',
-                          Icons.lock_outline,
-                          obscureText: true,
-                        ),
-                        _buildDropdown(),
-                        _buildTextField(
-                          phonecontroller,
-                          'Số điện thoại',
-                          Icons.phone,
-                        ),
-                        _buildBirthdateField(),
-                        SizedBox(height: 40.0),
-                        _buildSignUpButton(),
-                        SizedBox(height: 20.0),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DangNhap(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "Đã có tài khoản? Đăng nhập",
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildTextField(
@@ -266,6 +162,7 @@ class _SignUpPageState extends State<DangKy> {
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hintText,
+          labelText: hintText,
           prefixIcon: Icon(icon, color: AppColors.primary),
           border: OutlineInputBorder(
             borderSide: BorderSide(color: AppColors.primary, width: 1),
@@ -282,7 +179,7 @@ class _SignUpPageState extends State<DangKy> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: DropdownButtonFormField<String>(
-        value: _selectedGender,
+        value: _selectedgioitinh,
         decoration: InputDecoration(
           labelText: 'Giới tính',
           labelStyle: TextStyle(color: AppColors.primary),
@@ -292,7 +189,7 @@ class _SignUpPageState extends State<DangKy> {
         ),
         onChanged: (String? newValue) {
           setState(() {
-            _selectedGender = newValue!;
+            _selectedgioitinh = newValue!;
           });
         },
         items:
@@ -305,12 +202,12 @@ class _SignUpPageState extends State<DangKy> {
     );
   }
 
-  Widget _buildBirthdateField() {
+  Widget _buildngaysinhField() {
     return GestureDetector(
-      onTap: () => _selectBirthdate(context),
+      onTap: () => _selectngaysinh(context),
       child: AbsorbPointer(
         child: TextFormField(
-          controller: birthdatecontroller,
+          controller: ngaysinhController,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Vui lòng nhập ngày sinh';
@@ -340,7 +237,7 @@ class _SignUpPageState extends State<DangKy> {
           decoration: BoxDecoration(color: AppColors.primary),
           child: Center(
             child: Text(
-              "Đăng Ký",
+              "ĐĂNG KÝ",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.0,
@@ -348,6 +245,133 @@ class _SignUpPageState extends State<DangKy> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: Stack(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 2.5,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppColors.primary, AppColors.primary],
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height / 3,
+              ),
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40),
+                  topRight: Radius.circular(40),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
+              child: Column(
+                children: [
+                  Center(
+                    child: Image.asset(
+                      "assets/images/Logo.jpg",
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: 150,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(height: 50.0),
+                  Material(
+                    elevation: 5.0,
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 2,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 30.0),
+                            Text(
+                              "ĐĂNG KÝ",
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.secondary,
+                              ),
+                            ),
+                            SizedBox(height: 30.0),
+                            _buildTextField(
+                              hotenkhController,
+                              'Tên',
+                              Icons.person_outlined,
+                            ),
+                            _buildTextField(
+                              emailController,
+                              'Email',
+                              Icons.email_outlined,
+                            ),
+                            _buildTextField(
+                              passwordController,
+                              'Mật khẩu',
+                              Icons.lock_outline,
+                              obscureText: true,
+                            ),
+                            _buildDropdown(),
+                            _buildTextField(
+                              sdtController,
+                              'Số điện thoại',
+                              Icons.phone,
+                            ),
+                            _buildngaysinhField(),
+                            SizedBox(height: 40.0),
+                            _buildSignUpButton(),
+                            SizedBox(height: 20.0),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DangNhap(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Đã có tài khoản? Đăng nhập",
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

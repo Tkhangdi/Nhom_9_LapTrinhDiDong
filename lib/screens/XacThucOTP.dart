@@ -17,6 +17,7 @@ class _XacThucOTPState extends State<XacThucOTP> {
     6,
     (index) => TextEditingController(),
   );
+  List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   int _demNguoc = 0;
   Timer? _timer;
 
@@ -46,6 +47,9 @@ class _XacThucOTPState extends State<XacThucOTP> {
     _timer?.cancel();
     for (var controller in _controllers) {
       controller.dispose();
+    }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
     }
     super.dispose();
   }
@@ -94,6 +98,7 @@ class _XacThucOTPState extends State<XacThucOTP> {
                   width: 40,
                   child: TextField(
                     controller: _controllers[index],
+                    focusNode: _focusNodes[index],
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     maxLength: 1,
@@ -105,8 +110,24 @@ class _XacThucOTPState extends State<XacThucOTP> {
                       ),
                     ),
                     onChanged: (value) {
-                      if (value.isNotEmpty && index < 5) {
-                        FocusScope.of(context).nextFocus();
+                      if (value.isNotEmpty) {
+                        // Nếu có giá trị, chuyển sang ô tiếp theo nếu chưa nhập xong ô cuối
+                        if (index < 4) {
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index + 1]);
+                        } else {
+                          FocusScope.of(
+                            context,
+                          ).unfocus(); // Tắt bàn phím khi nhập đủ 6 số
+                        }
+                      } else {
+                        // Nếu người dùng xóa, quay lại ô trước đó
+                        if (index > 0 && value.isEmpty) {
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index - 1]);
+                        }
                       }
                     },
                   ),

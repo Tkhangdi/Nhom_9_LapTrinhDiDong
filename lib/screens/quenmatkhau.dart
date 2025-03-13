@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ban_dong_ho/screens/dangky.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -60,16 +61,16 @@ class _QuenMatKhauState extends State<QuenMatKhau> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldMessengerKey,
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           children: [
             const SizedBox(height: 70.0),
             const Text(
-              'Khôi phục mật khẩu',
+              'KHÔI PHỤC MẬT KHẨU',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -78,7 +79,7 @@ class _QuenMatKhauState extends State<QuenMatKhau> {
             const Text(
               'Nhập email của bạn',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.primary,
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -164,12 +165,18 @@ class _QuenMatKhauState extends State<QuenMatKhau> {
                     children: [
                       const Text(
                         'Chưa có tài khoản?',
-                        style: TextStyle(fontSize: 18.0, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                       const SizedBox(width: 5.0),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/dangky');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => DangKy()),
+                          );
                         },
                         child: const Text(
                           'Tạo tài khoản',

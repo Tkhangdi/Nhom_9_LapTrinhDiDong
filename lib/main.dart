@@ -5,7 +5,7 @@ import 'package:shop_ban_dong_ho/screens/Info.dart';
 import 'package:shop_ban_dong_ho/screens/dangky.dart';
 import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
-import 'package:shop_ban_dong_ho/screens/xacnhanmatkhau.dart';
+import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
@@ -25,9 +25,9 @@ class MyApp extends StatelessWidget {
       title: "APP BAN DONG HO",
       debugShowCheckedModeBanner: false,
       //home: MyButtonNavigationBar(),
-      home: DangKy(),
-      // home: OTP(),
-      //home: DangNhap(),
+      // home: DangKy(),
+      //home: XacThucOTP(soDienThoai: '122332233'),
+      home: DangNhap(),
     );
   }
 }
