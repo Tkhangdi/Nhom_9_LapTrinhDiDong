@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../screens/gioHang.dart'; // Import your Cart screen here
+import 'package:shop_ban_dong_ho/models/Cart.dart';
+import 'package:shop_ban_dong_ho/models/CartItem.dart';
+import '../screens/Giohang.dart'; // Import your Cart screen here
 
 class HeaderParts extends StatefulWidget {
   const HeaderParts({super.key});
@@ -10,6 +12,11 @@ class HeaderParts extends StatefulWidget {
 
 int indexCategory = 0;
 
+Cart myCart = Cart(); // Định nghĩa giỏ hàng
+List<CartItem> danhSachGioHang = []; // Khởi tạo danh sách giỏ hàng
+
+
+
 class _HeaderPartsState extends State<HeaderParts> {
   @override
   Widget build(BuildContext context) {
@@ -17,11 +24,11 @@ class _HeaderPartsState extends State<HeaderParts> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         topHeader(),
-        const SizedBox(height: 30),
+        const SizedBox(height: 10),
         title(),
-        const SizedBox(height: 21),
+        const SizedBox(height: 10),
         searchBar(),
-        const SizedBox(height: 30),
+        const SizedBox(height: 10),
         categorySelection(),
       ],
     );
@@ -30,7 +37,7 @@ class _HeaderPartsState extends State<HeaderParts> {
   Padding categorySelection() {
     List list = ["All"];
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: SizedBox(
         height: 35,
         child: ListView.builder(
@@ -140,7 +147,7 @@ class _HeaderPartsState extends State<HeaderParts> {
 
   Padding topHeader() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 30),
       child: Row(
         children: [
           // For menu
@@ -179,7 +186,7 @@ class _HeaderPartsState extends State<HeaderParts> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => GioHang(),
+                    builder: (context) => GioHang(gioHang: myCart,danhSachSanPham: danhSachGioHang,),
                   ), // Replace with your Cart screen
                 );
               },
