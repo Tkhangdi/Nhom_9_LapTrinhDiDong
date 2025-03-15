@@ -58,6 +58,7 @@ class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: _widgetAppbar.elementAt(_selectedIndex),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
