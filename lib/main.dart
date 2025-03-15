@@ -8,7 +8,6 @@ import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarInfo.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarShopping_cart.dart';
-import 'package:shop_ban_dong_ho/widgets/headerparts.dart';
 
 void main() {
   runApp(const MyApp());

@@ -148,10 +148,10 @@ class _GioHangState extends State<GioHang> {
                   ),
                   ElevatedButton(
                     onPressed: xoaTatCa,
-                    child: const Text("Xóa tất cả"),
                     style: ElevatedButton.styleFrom(
                       textStyle: const TextStyle(fontSize: 16),
                     ),
+                    child: const Text("Xóa tất cả"),
                   ),
                 ],
               ),
@@ -242,12 +242,12 @@ class _GioHangState extends State<GioHang> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ElevatedButton(
                 onPressed: thanhToan,
-                child: const Text("Thanh Toán"),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
 
                   textStyle: const TextStyle(fontSize: 18),
                 ),
+                child: const Text("Thanh Toán"),
               ),
             ),
           ],

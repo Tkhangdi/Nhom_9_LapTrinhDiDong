@@ -71,7 +71,7 @@ class DuLieu {
   // Hàm tìm người dùng theo email
   // Method to get user by email
   Future<List<Map<String, dynamic>>> getUsersByEmail(String email) async {
-    final db = await _database;
+    final db = _database;
     return await db!.query('users', where: 'email = ?', whereArgs: [email]);
   }
 }
