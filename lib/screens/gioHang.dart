@@ -20,7 +20,7 @@ class _GioHangState extends State<GioHang> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Giỏ Hàng")),
+      //appBar: AppBar(title: const Text("Giỏ Hàng")),
       body: Column(
         children: [Expanded(child: _buildCartItems()), _buildCartSummary()],
       ),
@@ -33,12 +33,80 @@ class _GioHangState extends State<GioHang> {
           widget.gioHang.items.length, // Dùng widget.gioHang thay vì gioHang
       itemBuilder: (context, index) {
         final item = widget.gioHang.items[index];
-        return ListTile(
-          leading:
+        // return ListTile(
+        //   leading:
+        //       item.hinhAnh.startsWith('http')
+        //           ? Image.network(
+        //             item.hinhAnh,
+        //             height: 250,
+        //             width: 70,
+        //             fit: BoxFit.contain,
+        //             errorBuilder: (context, error, stackTrace) {
+        //               return const Icon(
+        //                 Icons.broken_image,
+        //                 size: 50,
+        //                 color: Colors.red,
+        //               );
+        //             },
+        //           )
+        //           : Image.asset(
+        //             item.hinhAnh,
+        //             height: 250,
+        //             width: 70,
+        //             fit: BoxFit.contain,
+        //             errorBuilder: (context, error, stackTrace) {
+        //               return const Icon(
+        //                 Icons.image_not_supported,
+        //                 size: 50,
+        //                 color: Colors.grey,
+        //               );
+        //             },
+        //           ),
+
+        //   title: Text(item.ten),
+        //   subtitle: Text("${item.gia} x ${item.soLuong}"),
+        //   trailing: Row(
+        //     mainAxisSize: MainAxisSize.min,
+        //     children: [
+        //       IconButton(
+        //         icon: const Icon(Icons.remove),
+        //         onPressed: () {
+        //           setState(() {
+        //             widget.gioHang.updateQuantity(item.id, item.soLuong - 1);
+        //           });
+        //         },
+        //       ),
+        //       IconButton(
+        //         icon: const Icon(Icons.add),
+        //         onPressed: () {
+        //           setState(() {
+        //             widget.gioHang.updateQuantity(item.id, item.soLuong + 1);
+        //           });
+        //         },
+        //       ),
+        //       IconButton(
+        //         icon: const Icon(Icons.delete, color: Colors.red),
+        //         onPressed: () {
+        //           setState(() {
+        //             //widget.gioHang.removeItem(item.id);
+        //             _showDeleteConfirmationDialog(context, item.id);
+        //           });
+        //         },
+        //       ),
+        //     ],
+        //   ),
+        // );
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Hình ảnh sản phẩm
               item.hinhAnh.startsWith('http')
                   ? Image.network(
                     item.hinhAnh,
-                    height: 250,
+                    height: 70,
+                    width: 70,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return const Icon(
@@ -50,8 +118,8 @@ class _GioHangState extends State<GioHang> {
                   )
                   : Image.asset(
                     item.hinhAnh,
-                    height: 250,
-                    width: 60,
+                    height: 70,
+                    width: 70,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return const Icon(
@@ -62,35 +130,63 @@ class _GioHangState extends State<GioHang> {
                     },
                   ),
 
-          title: Text(item.ten),
-          subtitle: Text("${item.gia} x ${item.soLuong}"),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove),
-                onPressed: () {
-                  setState(() {
-                    widget.gioHang.updateQuantity(item.id, item.soLuong - 1);
-                  });
-                },
+              const SizedBox(width: 10), // Khoảng cách giữa ảnh và thông tin
+              // Thông tin sản phẩm
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.ten,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis, // Ngăn chữ tràn dòng
+                      maxLines: 1,
+                    ),
+                    Text(
+                      "${item.gia} x ${item.soLuong}",
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  setState(() {
-                    widget.gioHang.updateQuantity(item.id, item.soLuong + 1);
-                  });
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  setState(() {
-                    //widget.gioHang.removeItem(item.id);
-                    _showDeleteConfirmationDialog(context, item.id);
-                  });
-                },
+
+              // Các nút thao tác
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      setState(() {
+                        widget.gioHang.updateQuantity(
+                          item.id,
+                          item.soLuong - 1,
+                        );
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        widget.gioHang.updateQuantity(
+                          item.id,
+                          item.soLuong + 1,
+                        );
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      setState(() {
+                        _showDeleteConfirmationDialog(context, item.id);
+                      });
+                    },
+                  ),
+                ],
               ),
             ],
           ),

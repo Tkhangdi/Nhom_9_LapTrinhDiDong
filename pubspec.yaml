@@ -68,6 +68,7 @@ flutter:
     - assets/product/dong_ho_Rolex_Submariner.jpg
     - assets/product/dong_ho_Omega_Seamaster.jpg
     - assets/product/dong_ho_Omega_lan_cao_cap.jpg
+    - assets/profile_picture.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
