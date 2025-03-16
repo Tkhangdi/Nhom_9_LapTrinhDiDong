@@ -4,6 +4,7 @@ import 'package:shop_ban_dong_ho/screens/GioHang.dart';
 import 'package:shop_ban_dong_ho/screens/Info.dart';
 import 'package:shop_ban_dong_ho/screens/dangky.dart';
 import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
+import 'package:shop_ban_dong_ho/screens/faq.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
 import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       //home: MyButtonNavigationBar(),
       // home: DangKy(),
       //home: XacThucOTP(soDienThoai: '122332233'),
-      home: DangNhap(),
+      home: HelpCenterScreen(),
     );
   }
 }
