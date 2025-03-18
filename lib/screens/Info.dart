@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_ban_dong_ho/screens/thongbao.dart';// Import màn hình thông báo
+import 'package:shop_ban_dong_ho/screens/thongtinnguoidung.dart';
 
 class Info extends StatelessWidget {
   const Info({super.key});
@@ -49,6 +50,12 @@ class Info extends StatelessWidget {
                     context,
                     icon: Icons.person_outline,
                     text: "My Account",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MyAccountScreen()),
+                      );
+                    },
                   ),
                   buildMenuItem(
                     context,
