@@ -42,7 +42,9 @@ class MyApp extends StatelessWidget {
 class MyButtonNavigationBar extends StatefulWidget {
   const MyButtonNavigationBar({super.key});
   @override
-  State<StatefulWidget> createState() => _MyButtonNavigationBar();
+  State<StatefulWidget> createState() {
+    return _MyButtonNavigationBar();
+  }
 }
 
 class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
@@ -81,6 +83,7 @@ class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: _widgetAppbar.elementAt(_selectedIndex),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
