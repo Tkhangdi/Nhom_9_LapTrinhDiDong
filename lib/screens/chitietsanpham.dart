@@ -1,27 +1,40 @@
-import 'package:shop_ban_dong_ho/screens/gioHang.dart';
 import 'package:flutter/material.dart';
-import '../models/DongHo.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_ban_dong_ho/models/Cart.dart';
+import 'package:shop_ban_dong_ho/models/CartItem.dart';
 
 class ChiTietSanPham extends StatefulWidget {
-  final DongHo dh;
-
-  const ChiTietSanPham({super.key, required this.dh});
+  final CartItem dh;
+  final Cart gioHang; // Thêm giỏ hàng vào
+  const ChiTietSanPham({super.key, required this.dh, required this.gioHang});
 
   @override
   State<ChiTietSanPham> createState() => _ChiTietSanPhamState();
 }
 
 class _ChiTietSanPhamState extends State<ChiTietSanPham> {
+  int _selectedColorIndex = 0;
+  bool _isFavorite = false; // Thêm biến để lưu trạng thái yêu thích
+  List<Color> colors = [
+    Colors.purple,
+    Colors.yellow,
+    Colors.green,
+    Colors.white,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F6F9),
-      body: ListView(
+      backgroundColor: Colors.white,
+      body: Column(
         children: [
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           _buildHeader(),
-          _buildProductImage(),
-          _buildProductDetails(),
+          Expanded(
+            child: ListView(
+              children: [_buildProductImage(), _buildProductDetails()],
+            ),
+          ),
         ],
       ),
     );
@@ -29,22 +42,19 @@ class _ChiTietSanPhamState extends State<ChiTietSanPham> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Navigator.pop(context),
           ),
-          const Spacer(),
-          const Text(
-            "Chi Tiết Sản Phẩm",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.favorite_border, color: Colors.black),
-            onPressed: () {},
+          Row(
+            children: [
+              Icon(Icons.star, color: Colors.amber),
+              Text("4.5", style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
           ),
         ],
       ),
@@ -53,123 +63,192 @@ class _ChiTietSanPhamState extends State<ChiTietSanPham> {
 
   Widget _buildProductImage() {
     return Center(
-      child: Container(
-        height: 250,
-        width: 250,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(250),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(250),
-          child: Image.network(widget.dh.hinhAnh, fit: BoxFit.cover),
-        ),
-      ),
+      child:
+          widget.dh.hinhAnh.startsWith('http')
+              ? Image.network(
+                widget.dh.hinhAnh,
+                height: 250,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.broken_image,
+                    size: 50,
+                    color: Colors.red,
+                  );
+                },
+              )
+              : Image.asset(
+                widget.dh.hinhAnh,
+                height: 250,
+                fit: BoxFit.contain,
+              ),
     );
   }
 
   Widget _buildProductDetails() {
     return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: const BoxDecoration(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
         ),
-        color: Colors.white,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.dh.ten,
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            '\$${widget.dh.gia}',
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.orange,
-            ),
-          ),
-          const SizedBox(height: 10),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.access_time_filled, color: Colors.orange),
-              const SizedBox(width: 4),
               Text(
-                widget.dh.thuongHieu,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                widget.dh.ten,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isFavorite = !_isFavorite;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: _isFavorite ? Colors.red : Colors.white,
+                    size: 28,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
+          Text(
+            '\ ${widget.dh.gia} VNĐ',
+            style: TextStyle(
+              fontSize: 22,
+              color: Colors.orange,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 15),
+          Row(
+            children: [
+              ..._buildColorOptions(),
+              Spacer(),
+              _buildQuantitySelector(),
+            ],
+          ),
+          SizedBox(height: 20),
           Text(
             widget.dh.moTa,
-            style: const TextStyle(fontSize: 16, color: Colors.grey),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
-          const SizedBox(height: 25),
-          _buildActionButtons(),
+          SizedBox(height: 25),
+          _buildBottomButtons(),
         ],
       ),
     );
   }
 
-  Widget _buildActionButtons() {
+  List<Widget> _buildColorOptions() {
+    return List.generate(colors.length, (index) {
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedColorIndex = index;
+          });
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 5),
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: colors[index],
+            border: Border.all(
+              color:
+                  _selectedColorIndex == index
+                      ? Colors.orange
+                      : Colors.transparent,
+              width: 3,
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildQuantitySelector() {
+    return Row(
+      children: [
+        _buildCounterButton(Icons.remove, () {
+          setState(() {
+            if (widget.dh.soLuong > 1) {
+              widget.dh.soLuong -= 1;
+            }
+          });
+        }),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            widget.dh.soLuong.toString(),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        _buildCounterButton(Icons.add, () {
+          setState(() {
+            widget.dh.soLuong += 1;
+          });
+        }),
+      ],
+    );
+  }
+
+  Widget _buildCounterButton(IconData icon, VoidCallback onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey),
+      ),
+      child: IconButton(icon: Icon(icon, size: 18), onPressed: onPressed),
+    );
+  }
+
+  Widget _buildBottomButtons() {
     return Row(
       children: [
         Expanded(
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
             onPressed: () {
-              GioHang.themVaoGio(widget.dh, () {});
+              Provider.of<Cart>(
+                context,
+                listen: false,
+              ).addItem(widget.dh); // Gọi hàm khi bấm nút
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${widget.dh.ten} đã được thêm vào giỏ hàng!'),
-                  backgroundColor: Colors.orange,
+                  content: Text("Đã thêm ${widget.dh.ten} vào giỏ hàng"),
+                  duration: Duration(seconds: 1),
+                  backgroundColor: Colors.green,
                 ),
               );
             },
-            child: const Text(
-              "Thêm vào Giỏ Hàng",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-        const SizedBox(width: 15),
-        Expanded(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Mua Ngay Thành Công"),
-                    content: Text("Bạn đã mua sản phẩm: ${widget.dh.ten}"),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: const Text(
-              "Mua Ngay",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Text(
+                "Thêm vào giỏ hàng",
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
             ),
           ),
         ),

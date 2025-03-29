@@ -1,7 +1,7 @@
-import 'package:shop_ban_dong_ho/models/DongHo.dart';
+import 'package:shop_ban_dong_ho/models/CartItem.dart';
 import 'package:flutter/material.dart';
-
-import 'chitietsanpham.dart';
+import 'Chitietsanpham.dart';
+import 'package:shop_ban_dong_ho/models/Cart.dart';
 
 class DanhSachSanPham extends StatefulWidget {
   const DanhSachSanPham({super.key});
@@ -11,184 +11,167 @@ class DanhSachSanPham extends StatefulWidget {
 }
 
 class _DanhSachSanPhamState extends State<DanhSachSanPham> {
-  // Giả sử bạn đã có một danh sách các đồng hồ
-  List<DongHo> danhSachDongHo = [
-    DongHo(
+  final Cart gioHang = Cart(); // Thêm biến giỏ hàng
+
+  List<CartItem> danhSachDongHo = [
+    CartItem(
       id: '1',
-      ten: 'Đồng Hồ Rolex Submariner',
+      ten: 'Rolex Submariner',
       thuongHieu: 'Rolex',
-      gia: 8500.00,
-      hinhAnh:
-          'https://www.dangquangwatch.vn/lib/ckfinder/images/1725e0259fa778f921b6.jpg',
-      moTa: 'Rolex Submariner là một chiếc đồng hồ thể thao sang trọng.',
-      soLuong: 34,
+      gia: 8500000.00,
+      hinhAnh: 'assets/product/dong_ho_Rolex_Submariner.jpg',
+      moTa: 'Đồng hồ thể thao sang trọng.',
+      soLuong: 1,
     ),
-    DongHo(
+    CartItem(
       id: '2',
-      ten: 'Đồng Hồ Casio G-Shock',
+      ten: 'Casio G-Shock',
       thuongHieu: 'Casio',
-      gia: 120.00,
-      hinhAnh:
-          'https://demoda.vn/wp-content/uploads/2022/01/xu-huong-dong-ho-nu-duoc-ua-chuong.jpg',
-      moTa: 'Casio G-Shock là chiếc đồng hồ thể thao bền bỉ.',
-      soLuong: 34,
+      gia: 1200000.00,
+      hinhAnh: 'assets/product/dong_ho_casioG-Shock.jpg',
+      moTa: 'Đồng hồ thể thao bền bỉ.',
+      soLuong: 1,
     ),
-    DongHo(
+    CartItem(
       id: '3',
       ten: 'Đồng Hồ Omega Seamaster',
       thuongHieu: 'Omega',
-      gia: 5300.00,
-      hinhAnh:
-          'https://www.omegawatches.com/media/12258/seamaster-diver-300m-steel.jpg',
+      gia: 5300000.00,
+      hinhAnh: 'assets/product/dong_ho_Omega_Seamaster.jpg',
       moTa: 'Omega Seamaster là chiếc đồng hồ lặn cao cấp.',
-      soLuong: 33,
+      soLuong: 1,
     ),
-    DongHo(
+    CartItem(
       id: '4',
       ten: 'Đồng Hồ Omega',
       thuongHieu: 'Omega',
-      gia: 5300.00,
-      hinhAnh:
-          'https://toigingiuvedep.vn/wp-content/uploads/2021/08/dong-ho-dien-tu-deo-tay-nam.jpg',
+      gia: 5500000.00,
+      hinhAnh: 'assets/product/dong_ho_Omega_lan_cao_cap.jpg',
       moTa: 'Omega là chiếc đồng hồ lặn cao cấp.',
-      soLuong: 300,
+      soLuong: 1,
     ),
   ];
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh Sách Đồng Hồ'),
-        backgroundColor: const Color.fromARGB(
-          255,
-          218,
-          240,
-          241,
-        ), // Màu đen cho thanh appBar tạo cảm giác sang trọng
+        title: const Text('Danh Sách Sản Phẩm'),
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: GridView.builder(
-        shrinkWrap: true,
-        itemCount: danhSachDongHo.length,
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Sử dụng 2 cột trong lưới
-          mainAxisSpacing: 16, // Khoảng cách dọc giữa các mục
-          crossAxisSpacing: 16, // Khoảng cách ngang giữa các mục
-          mainAxisExtent: 300, // Chiều cao của mỗi item trong lưới
-        ),
-        itemBuilder: (context, index) {
-          DongHo dongHo = danhSachDongHo[index]; // Lấy đồng hồ từ danh sách
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChiTietSanPham(dh: dongHo),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: GridView.builder(
+          itemCount: danhSachDongHo.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            mainAxisExtent: 280,
+          ),
+          itemBuilder: (context, index) {
+            CartItem dongHo = danhSachDongHo[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            ChiTietSanPham(dh: dongHo, gioHang: gioHang),
+                  ),
+                );
+              },
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              ); // Chuyển đến chi tiết đồng hồ khi người dùng nhấn vào item
-            },
-            child: Container(
-              height: 300,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(
-                  255,
-                  180,
-                  221,
-                  224,
-                ), // Màu tối cho nền item
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(
-                      255,
-                      124,
-                      124,
-                      150,
-                    ), // Tạo bóng cho item
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                elevation: 4,
+                child: Column(
+                  children: [
+                    // Hình ảnh đồng hồ
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(125),
+                      child:
+                          dongHo.hinhAnh.startsWith('http')
+                              ? Image.network(
+                                dongHo.hinhAnh,
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(
+                                    Icons.error,
+                                    size: 50,
+                                    color: Colors.red,
+                                  );
+                                },
+                              )
+                              : Image.asset(
+                                dongHo.hinhAnh,
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.cover,
+                              ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            dongHo.ten,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            dongHo.thuongHieu,
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            '\ ${dongHo.gia} VNĐ',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: const BorderSide(
+                                    color: Colors.deepOrange,
+                                  ),
+                                ),
+                              ),
+                              child: const Text(
+                                'Mua ngay',
+                                style: TextStyle(color: Colors.deepOrange),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 15),
-                  // Hình ảnh đồng hồ
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(125),
-                    child: Image.network(
-                      dongHo.hinhAnh, // Hiển thị hình ảnh đồng hồ
-                      height: 120,
-                      width: 120,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  // Tên đồng hồ
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(
-                      dongHo.ten,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  // Thương hiệu đồng hồ
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(
-                      dongHo.thuongHieu,
-                      style: const TextStyle(color: Colors.amberAccent),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
-                    ),
-                    child: Text(
-                      '\$${dongHo.soLuong}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color:
-                            Colors.amber, // Màu vàng cho giá để tạo sự nổi bật
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  // Giá đồng hồ
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
-                    ),
-                    child: Text(
-                      '\$${dongHo.gia}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color:
-                            Colors.amber, // Màu vàng cho giá để tạo sự nổi bật
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

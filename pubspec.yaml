@@ -38,6 +38,7 @@ dependencies:
   sqflite: ^2.0.0+4 # Thêm dòng này
   path_provider: ^2.0.3 # Thêm path_provider để lấy đường dẫn lưu trữ cơ sở dữ liệu
   path: ^1.8.3 # Thêm path để xử lý đường dẫn
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -60,13 +61,14 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  assets:
-  - assets/images/Logo.jpg
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/product/dong_ho_casioG-Shock.jpg
+    - assets/product/dong_ho_Rolex_Submariner.jpg
+    - assets/product/dong_ho_Omega_Seamaster.jpg
+    - assets/product/dong_ho_Omega_lan_cao_cap.jpg
+    - assets/profile_picture.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

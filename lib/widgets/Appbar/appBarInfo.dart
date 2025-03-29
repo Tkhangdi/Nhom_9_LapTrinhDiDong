@@ -5,8 +5,13 @@ class Appbarinfo extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return AppBar(title: Text("App bar info"));
+    // implement build
+    return AppBar(
+      title: Container(
+        alignment: Alignment.center,
+        child: Text("Thông tin cá nhân", style: TextStyle(color: Colors.black)),
+      ),
+    );
   }
 
   @override

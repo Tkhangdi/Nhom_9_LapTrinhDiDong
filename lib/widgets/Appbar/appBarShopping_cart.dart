@@ -6,8 +6,17 @@ class AppbarshoppingCart extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return AppBar(title: Text("App bar shop"));
+    // implement build
+    return AppBar(
+      title: Text(
+        "Giỏ Hàng",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+      centerTitle: true,
+    );
   }
 
   @override

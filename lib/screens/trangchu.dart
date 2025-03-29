@@ -1,5 +1,4 @@
 import 'package:shop_ban_dong_ho/screens/danhsachsanpham.dart';
-import 'package:shop_ban_dong_ho/widgets/headerparts.dart';
 import 'package:flutter/material.dart';
 
 class TrangChu extends StatefulWidget {
@@ -14,8 +13,7 @@ class _HomePageState extends State<TrangChu> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Assuming HeaderParts widget is also part of the layout
-        const SizedBox(height: 15),
+        const SizedBox(height: 200),
         const Expanded(
           child: DanhSachSanPham(),
         ), // Expanded to take full available space
@@ -23,3 +21,4 @@ class _HomePageState extends State<TrangChu> {
     );
   }
 }
+

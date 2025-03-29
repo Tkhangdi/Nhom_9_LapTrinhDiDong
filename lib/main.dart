@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ban_dong_ho/models/Cart.dart';
+import 'package:shop_ban_dong_ho/models/CartItem.dart';
 import 'package:shop_ban_dong_ho/screens/Favorite.dart';
 import 'package:shop_ban_dong_ho/screens/GioHang.dart';
 import 'package:shop_ban_dong_ho/screens/Info.dart';
@@ -12,10 +14,14 @@ import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarInfo.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarShopping_cart.dart';
-import 'package:shop_ban_dong_ho/widgets/headerparts.dart';
+import 'package:provider/provider.dart';
+
+// void main() {
+//   runApp(const MyApp());
+// }
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(create: (context) => Cart(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -36,26 +42,36 @@ class MyApp extends StatelessWidget {
 class MyButtonNavigationBar extends StatefulWidget {
   const MyButtonNavigationBar({super.key});
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _MyButtonNavigationBar();
-  }
+  State<StatefulWidget> createState() => _MyButtonNavigationBar();
 }
 
 class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
   int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
-    TrangChu(),
-    Favorite(),
-    GioHang(),
-    Info(),
-  ];
+  final List<CartItem> danhSachSanPham = []; // Thêm danh sách sản phẩm
+
+  late final List<Widget> _widgetOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    _widgetOptions = [
+      TrangChu(),
+      Favorite(),
+      GioHang(
+        gioHang: Provider.of<Cart>(context, listen: false),
+        danhSachSanPham: danhSachSanPham,
+      ),
+      Info(),
+    ];
+  }
+
   static const List<PreferredSizeWidget> _widgetAppbar = <PreferredSizeWidget>[
     Appbarhome(),
     Appbarfavorite(),
     AppbarshoppingCart(),
     Appbarinfo(),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -83,8 +99,8 @@ class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
         backgroundColor: AppColors.background,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.secondary,
-        showSelectedLabels: false, // Ẩn label khi chọn
-        showUnselectedLabels: false, // Ẩn label khi chưa chọn
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
       ),
