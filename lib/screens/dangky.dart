@@ -5,6 +5,8 @@ import 'package:shop_ban_dong_ho/utils/data.dart';
 import 'package:flutter/material.dart';
 
 class DangKy extends StatefulWidget {
+  const DangKy({super.key});
+
   @override
   _DangKyState createState() => _DangKyState();
 }

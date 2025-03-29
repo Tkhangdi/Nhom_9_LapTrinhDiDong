@@ -1,52 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:shop_ban_dong_ho/screens/thongbao.dart';// Import màn hình thông báo
+import 'package:shop_ban_dong_ho/screens/thongtinnguoidung.dart';
 
 void main() {
   runApp(Info());
 }
 
 class Info extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ProfileScreen(),
-    );
-  }
-}
+  const Info({super.key});
 
-class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 20),
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage(
-                'assets/profile_picture.png',
-              ), // Thay đổi đường dẫn nếu cần
+            const SizedBox(height: 20),
+            Center(
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.grey[300],
+                        backgroundImage: AssetImage("assets/images/avatar.jpg"),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: CircleAvatar(
+                          radius: 15,
+                          backgroundColor: Colors.white,
+                          child: Icon(Icons.camera_alt, color: Colors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Profile",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 10),
-            Text(
-              'Tran Khang Di',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView(
                 children: [
-                  _buildListTile(context,'My Account', Icons.account_circle),
-                  _buildListTile(context,'Notifications', Icons.notifications),
-                  _buildListTile(context,'Settings', Icons.settings,isSettings: true),
-                  _buildListTile(context,'Help Center', Icons.help),
-                  _buildListTile(context,'Log Out', Icons.logout),
+                  buildMenuItem(
+                    context,
+                    icon: Icons.person_outline,
+                    text: "My Account",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MyAccountScreen()),
+                      );
+                    },
+                  ),
+                  buildMenuItem(
+                    context,
+                    icon: Icons.notifications_outlined,
+                    text: "Notifications",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NotificationScreen()),
+                      );
+                    },
+                  ),
+                  buildMenuItem(
+                    context,
+                    icon: Icons.settings,
+                    text: "Settings",
+                  ),
+                  buildMenuItem(
+                    context,
+                    icon: Icons.help_outline,
+                    text: "Help Center",
+                  ),
+                  buildMenuItem(
+                    context,
+                    icon: Icons.logout,
+                    text: "Log Out",
+                    color: Colors.red,
+                  ),
                 ],
               ),
             ),
@@ -56,66 +97,37 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(BuildContext context, String title, IconData icon,{bool isSettings = false}) {
-    return Container(
-      margin: EdgeInsets.only(
-        top: 30,
-      ), // Khoảng cách giữa các ListTile
-      decoration: BoxDecoration(
-        color: Colors.grey[200], // Màu nền xám
-        borderRadius: BorderRadius.circular(10), // Bo góc
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.orange[400],size: 38,), // Màu cam cho icon
-        title: Text(title, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        onTap: () {
-          if (isSettings) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingsScreen()),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-
-
-class SettingsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Settings'),
-      ),
-      body: ListView(
-        children: [
-          _buildListTile(context, 'Chat setting', Icons.chat),
-          _buildListTile(context, 'Language', Icons.language),
-          _buildListTile(context, 'Delivery Address', Icons.location_on),
-          _buildListTile(context, 'Payment Methods', Icons.payment),
-          _buildListTile(context, 'Privacy Policy', Icons.privacy_tip),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildListTile(BuildContext context, String title, IconData icon) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.orange),
-        title: Text(title),
-        onTap: () {
-          // Thêm hàm để xử lý khi nhấn vào từng mục, ví dụ:
-          // Navigator.push(...)
-        },
+  Widget buildMenuItem(BuildContext context,
+      {required IconData icon, required String text, Color color = Colors.black, VoidCallback? onTap}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: InkWell(
+        onTap: onTap ??
+            () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("$text chưa được phát triển.")),
+              );
+            },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: color),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: color),
+                ),
+              ),
+              const Icon(Icons.lock, size: 16, color: Colors.grey),
+            ],
+          ),
+        ),
       ),
     );
   }
