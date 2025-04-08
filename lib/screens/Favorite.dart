@@ -15,7 +15,6 @@ class Favorite extends StatelessWidget {
             width: double.infinity,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.white,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -49,7 +48,6 @@ class Favorite extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -62,12 +60,15 @@ class Favorite extends StatelessWidget {
     );
   }
 
-  Widget cardItem(int index) {
+  Widget cardItem(int index, BuildContext context) {
     return Container(
       // Item đầu cao hơn
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:
+            Theme.of(context).brightness == Brightness.dark
+                ? const Color.fromARGB(255, 85, 84, 84)
+                : Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -138,7 +139,7 @@ class Favorite extends StatelessWidget {
                     ),
               ),
           onLongPress: () => _showBottomSheet(context),
-          child: cardItem(index),
+          child: cardItem(index, context),
         );
       },
     );

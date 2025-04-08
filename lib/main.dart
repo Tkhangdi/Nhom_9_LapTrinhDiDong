@@ -34,7 +34,52 @@ class MyApp extends StatelessWidget {
       //home: MyButtonNavigationBar(),
       // home: DangKy(),
       //home: XacThucOTP(soDienThoai: '122332233'),
-      home: HelpCenterScreen(),
+      home: MyButtonNavigationBar(),
+      theme: ThemeData(
+        primaryColor: Colors.orange,
+        scaffoldBackgroundColor: AppColors.background,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.orange, // Sử dụng màu cam làm màu chủ đạo
+          brightness: Brightness.light, // Chế độ sáng
+        ),
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 13,
+            fontFamily: "Ganh",
+            fontWeight: FontWeight.normal,
+          ),
+          bodyLarge: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 16,
+            fontFamily: "Ganh",
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ),
+      darkTheme: ThemeData(
+        scaffoldBackgroundColor: Colors.black,
+        primaryColor: Colors.orange,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.orange,
+          brightness: Brightness.dark, // Chế độ tối
+        ),
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            fontSize: 13,
+            fontFamily: "Ganh",
+            fontWeight: FontWeight.normal,
+          ),
+          bodyLarge: TextStyle(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            fontSize: 16,
+            fontFamily: "Ganh",
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ),
+      themeMode: ThemeMode.light,
     );
   }
 }
@@ -83,7 +128,6 @@ class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: _widgetAppbar.elementAt(_selectedIndex),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -101,7 +145,10 @@ class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
         ],
         backgroundColor: AppColors.background,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.secondary,
+        unselectedItemColor:
+            Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: _onItemTapped,

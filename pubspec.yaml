@@ -69,6 +69,14 @@ flutter:
     - assets/product/dong_ho_Omega_Seamaster.jpg
     - assets/product/dong_ho_Omega_lan_cao_cap.jpg
     - assets/profile_picture.png
+  
+  fonts:
+    - family: Ganh
+      fonts:
+        - asset: assets/fonts/Ganh Type - Regular.otf
+        - asset: assets/fonts/Ganh Type - RegularItalic.otf
+        - asset: assets/fonts/Ganh Type - Thin.otf
+        - asset: assets/fonts/Ganh Type - ThinItalic.otf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

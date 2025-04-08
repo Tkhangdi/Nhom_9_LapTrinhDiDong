@@ -8,7 +8,10 @@ class Appbarhome extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor:
+          Theme.of(context).brightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       scrolledUnderElevation: 0,
       elevation: 0,
       title: Row(

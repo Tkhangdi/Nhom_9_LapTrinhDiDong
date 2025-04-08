@@ -15,8 +15,10 @@ class _HomePageState extends State<TrangChu> {
     return Padding(
       padding: EdgeInsets.all(10),
       child: Material(
-        color: Colors.white,
-
+        color:
+            Theme.of(context).brightness == Brightness.dark
+                ? const Color.fromARGB(255, 85, 84, 84)
+                : Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(10)),
         child: InkWell(
           hoverColor: Colors.transparent,
@@ -30,10 +32,7 @@ class _HomePageState extends State<TrangChu> {
               ),
               Text(
                 "Apple Watch SE 2 GPS 40mm viền nhôm dây vải",
-                style: TextStyle(
-                  // Chỉ hiển thị tối đa 2 dòng
-                  overflow: TextOverflow.ellipsis,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium,
                 maxLines: 2,
                 textAlign: TextAlign.center,
               ),
@@ -120,4 +119,3 @@ class _HomePageState extends State<TrangChu> {
     );
   }
 }
-
