@@ -39,7 +39,10 @@ dependencies:
   path_provider: ^2.0.3 # Thêm path_provider để lấy đường dẫn lưu trữ cơ sở dữ liệu
   path: ^1.8.3 # Thêm path để xử lý đường dẫn
   provider: ^6.1.2
-
+  firebase_core: ^2.27.0
+  firebase_auth: ^4.16.0
+  cloud_firestore: ^4.15.0
+  intl: ^0.18.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

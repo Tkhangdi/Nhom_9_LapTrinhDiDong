@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_ban_dong_ho/firebase_options.dart';
 import 'package:shop_ban_dong_ho/models/Cart.dart';
 import 'package:shop_ban_dong_ho/models/CartItem.dart';
 import 'package:shop_ban_dong_ho/screens/Favorite.dart';
@@ -20,7 +22,9 @@ import 'package:provider/provider.dart';
 //   runApp(const MyApp());
 // }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(ChangeNotifierProvider(create: (context) => Cart(), child: MyApp()));
 }
 
