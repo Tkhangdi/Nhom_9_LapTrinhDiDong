@@ -42,6 +42,10 @@ dependencies:
   firebase_core: ^2.27.0
   firebase_auth: ^4.16.0
   cloud_firestore: ^4.15.0
+  firebase_messaging: ^14.2.2 # Thêm cho push notifications
+  flutter_local_notifications: ^12.0.3+1 # Thêm cho local notifications
+  firebase_analytics: ^10.1.0 # Thêm để theo dõi hành vi người dùng
+  shared_preferences: ^2.0.15 # Thêm để lưu cấu hình thông báo người dùng
   intl: ^0.18.0
 dev_dependencies:
   flutter_test:
@@ -72,6 +76,7 @@ flutter:
     - assets/product/dong_ho_Omega_Seamaster.jpg
     - assets/product/dong_ho_Omega_lan_cao_cap.jpg
     - assets/profile_picture.png
+    - assets/images/avatar.jpg
   
   fonts:
     - family: Ganh

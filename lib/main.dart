@@ -11,6 +11,7 @@ import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
 import 'package:shop_ban_dong_ho/screens/faq.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
 import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
+import 'package:shop_ban_dong_ho/service/NotificationService.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
@@ -99,6 +100,7 @@ class MyButtonNavigationBar extends StatefulWidget {
 class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
   int _selectedIndex = 0;
   final List<CartItem> danhSachSanPham = []; // Thêm danh sách sản phẩm
+  final NotificationService _notificationService = NotificationService();
 
   late final List<Widget> _widgetOptions;
 
@@ -114,6 +116,19 @@ class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
       ),
       Info(),
     ];
+    
+    // Khởi tạo dịch vụ thông báo sau khi build hoàn tất
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeNotificationService();
+    });
+  }
+
+  Future<void> _initializeNotificationService() async {
+    try {
+      await _notificationService.initialize(context);
+    } catch (e) {
+      print('Lỗi khi khởi tạo dịch vụ thông báo: $e');
+    }
   }
 
   static const List<PreferredSizeWidget> _widgetAppbar = <PreferredSizeWidget>[
