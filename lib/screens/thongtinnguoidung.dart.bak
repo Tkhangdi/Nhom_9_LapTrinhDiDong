@@ -90,7 +90,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             ],
           ),
         );
-      },
+      }
     );
   }
 
@@ -722,7 +722,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
             child: content,
-          ),
+          ],
         ],
       ),
     );
@@ -1216,6 +1216,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   }
 
   void _saveUserInfo() {
+    // Thực hiện lưu thông tin người dùng vào database
+    
     // Hiển thị loading indicator
     showDialog(
       context: context,

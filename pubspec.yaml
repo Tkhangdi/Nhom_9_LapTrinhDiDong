@@ -42,7 +42,11 @@ dependencies:
   firebase_core: ^2.27.0
   firebase_auth: ^4.16.0
   cloud_firestore: ^4.15.0
+  firebase_messaging: ^14.7.20 # Thêm để nhận thông báo đẩy
+  flutter_local_notifications: ^14.1.5 
+  image_picker: ^1.0.7 # Thêm để hỗ trợ chọn ảnh từ thư viện
   intl: ^0.18.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -72,6 +76,9 @@ flutter:
     - assets/product/dong_ho_Omega_Seamaster.jpg
     - assets/product/dong_ho_Omega_lan_cao_cap.jpg
     - assets/profile_picture.png
+    - assets/images/avatar.jpg
+    - assets/images/Logo.jpg
+    - assets/images/success.png
   
   fonts:
     - family: Ganh

@@ -1,0 +1,165 @@
+[1mdiff --git a/lib/screens/thongtinnguoidung.dart b/lib/screens/thongtinnguoidung.dart[m
+[1mindex f7cbad7..54282eb 100644[m
+[1m--- a/lib/screens/thongtinnguoidung.dart[m
+[1m+++ b/lib/screens/thongtinnguoidung.dart[m
+[36m@@ -1,4 +1,8 @@[m
+ import 'package:flutter/material.dart';[m
+[32m+[m[32mimport 'package:shop_ban_dong_ho/utils/app_colors.dart';[m
+[32m+[m[32mimport 'dart:io';[m
+[32m+[m[32mimport 'package:image_picker/image_picker.dart';[m
+[32m+[m[32mimport 'package:flutter/services.dart';[m
+ [m
+ class MyAccountScreen extends StatefulWidget {[m
+   const MyAccountScreen({super.key});[m
+[36m@@ -15,186 +19,1294 @@[m [mclass _MyAccountScreenState extends State<MyAccountScreen> {[m
+   String userAddress = "123 Đường ABC, Quận 1, TP.HCM";[m
+   String userGender = "Nam";[m
+   String userPassword = "MatKhau123";[m
+[31m-[m
+[32m+[m[32m  File? _profileImage;[m
+   bool isPasswordHidden = true;[m
+[32m+[m[32m  final ImagePicker _picker = ImagePicker();[m
+[32m+[m[41m  [m
+[32m+[m[32m  // Tab controller cho các loại thông tin[m
+[32m+[m[32m  int _selectedTabIndex = 0;[m
+[32m+[m[32m  final List<String> _tabs = ["Thông tin", "Bảo mật", "Tùy chọn"];[m
+ [m
+[31m-  String obfuscate(String text) {[m
+[31m-    if (text.length <= 2) return text; // Nếu quá ngắn thì không ẩn[m
+[31m-    return "${text[0]}${'*' * (text.length - 2)}${text[text.length - 1]}";[m
+[32m+[m[32m  // Controllers cho phép chỉnh sửa trực tiếp[m
+[32m+[m[32m  late TextEditingController _nameController;[m
+[32m+[m[32m  late TextEditingController _phoneController;[m
+[32m+[m[32m  late TextEditingController _addressController;[m
+[32m+[m[32m  late TextEditingController _emailController;[m
+[32m+[m[41m  [m
+[32m+[m[32m  @override[m
+[32m+[m[32m  void initState() {[m
+[32m+[m[32m    super.initState();[m
+[32m+[m[32m    _nameController = TextEditingController(text: userName);[m
+[32m+[m[32m    _phoneController = TextEditingController(text: userPhone);[m
+[32m+[m[32m    _addressController = TextEditingController(text: userAddress);[m
+[32m+[m[32m    _emailController = TextEditingController(text: userEmail);[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  @override[m
+[32m+[m[32m  void dispose() {[m
+[32m+[m[32m    _nameController.dispose();[m
+[32m+[m[32m    _phoneController.dispose();[m
+[32m+[m[32m    _addressController.dispose();[m
+[32m+[m[32m    _emailController.dispose();[m
+[32m+[m[32m    super.dispose();[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  Future<void> _getImage() async {[m
+[32m+[m[32m    showModalBottomSheet([m
+[32m+[m[32m      context: context,[m
+[32m+[m[32m      shape: const RoundedRectangleBorder([m
+[32m+[m[32m        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),[m
+[32m+[m[32m      ),[m
+[32m+[m[32m      builder: (BuildContext context) {[m
+[32m+[m[32m        return SafeArea([m
+[32m+[m[32m          child: Wrap([m
+[32m+[m[32m            children: <Widget>[[m
+[32m+[m[32m              ListTile([m
+[32m+[m[32m                leading: Icon(Icons.photo_library, color: AppColors.primary),[m
+[32m+[m[32m                title: const Text('Chọn từ thư viện'),[m
+[32m+[m[32m                onTap: () async {[m
+[32m+[m[32m                  Navigator.of(context).pop();[m
+[32m+[m[32m                  final XFile? image = await _picker.pickImage(source: ImageSource.gallery);[m
+[32m+[m[32m                  if (image != null) {[m
+[32m+[m[32m                    setState(() {[m
+[32m+[m[32m                      _profileImage = File(image.path);[m
+[32m+[m[32m                    });[m
+[32m+[m[32m                  }[m
+[32m+[m[32m                },[m
+[32m+[m[32m              ),[m
+[32m+[m[32m              ListTile([m
+[32m+[m[32m                leading: Icon(Icons.camera_alt, color: AppColors.primary),[m
+[32m+[m[32m                title: const Text('Chụp ảnh mới'),[m
+[32m+[m[32m                onTap: () async {[m
+[32m+[m[32m                  Navigator.of(context).pop();[m
+[32m+[m[32m                  final XFile? image = await _picker.pickImage(source: ImageSource.camera);[m
+[32m+[m[32m                  if (image != null) {[m
+[32m+[m[32m                    setState(() {[m
+[32m+[m[32m                      _profileImage = File(image.path);[m
+[32m+[m[32m                    });[m
+[32m+[m[32m                  }[m
+[32m+[m[32m                },[m
+[32m+[m[32m              ),[m
+[32m+[m[32m            ],[m
+[32m+[m[32m          ),[m
+[32m+[m[32m        );[m
+[32m+[m[32m      },[m
+[32m+[m[32m    );[m
+   }[m
+ [m
+   @override[m
+   Widget build(BuildContext context) {[m
+     return Scaffold([m
+[32m+[m[32m      backgroundColor: Colors.grey[100],[m
+[32m+[m[32m      extendBodyBehindAppBar: true,[m
+       appBar: AppBar([m
+[31m-        title: const Text("Thông tin cá nhân"),[m
+[31m-        backgroundColor: Colors.blue,[m
+[32m+[m[32m        title: const Text([m
+[32m+[m[32m          "Hồ Sơ Cá Nhân",[m
+[32m+[m[32m          style: TextStyle([m
+[32m+[m[32m            color: Colors.white,[m
+[32m+[m[32m            fontWeight: FontWeight.bold,[m
+[32m+[m[32m          ),[m
+[32m+[m[32m        ),[m
+[32m+[m[32m        centerTitle: true,[m
+[32m+[m[32m        backgroundColor: Colors.transparent,[m
+[32m+[m[32m        elevation: 0,[m
+[32m+[m[32m        leading: IconButton([m
+[32m+[m[32m          icon: const Icon(Icons.arrow_back, color: Colors.white),[m
+[32m+[m[32m          onPressed: () => Navigator.of(context).pop(),[m
+[32m+[m[32m        ),[m
+[32m+[m[32m        systemOverlayStyle: const SystemUiOverlayStyle([m
+[32m+[m[32m          statusBarColor: Colors.transparent,[m
+[32m+[m[32m          statusBarIconBrightness: Brightness.light,[m
+[32m+[m[32m        ),[m
+       ),[m
+[31m-      body: Padding([m
+[31m-        padding: const EdgeInsets.all(16.0),[m
+[32m+[m[32m      body: SingleChildScrollView([m
+         child: Column([m
+[31m-          crossAxisAlignment: CrossAxisAlignment.start,[m
+           children: [[m
+[31m-            Row([m
+[31m-              children: [[m
+[31m-                const CircleAvatar([m
+[31m-                  radius: 40,[m
+[31m-                  backgroundImage: AssetImage("assets/images/avatar.jpg"),[m
+[32m+[m[32m            // Gradient header with profile image[m
+[32m+[m[32m            Container([m
+[32m+[m[32m              padding: EdgeInsets.only([m
+[32m+[m[32m                bottom: 30.0,[m[41m [m
+[32m+[m[32m                top: MediaQuery.of(context).padding.top + 60[m
+[32m+[m[32m              ),[m
+[32m+[m[32m              decoration: BoxDecoration([m
+[32m+[m[32m                gradient: LinearGradient([m
+[32m+[m[32m                  begin: Alignment.topLeft,[m
+[32m+[m[32m                  end: Alignment.bottomRight,[m
+[32m+[m[32m                  colors: [[m
+[32m+[m[32m                    AppColors.primary,[m
+[32m+[m[32m                    AppColors.primary.withOpacity(0.8),[m
+[32m+[m[32m                  ],[m
+                 ),[m
+[31m-                const SizedBox(width: 20),[m
+[31m-                Column([m
+[31m-                  crossAxisAlignment: CrossAxisAlignment.start,[m
+[31m-                  children: [[m
+[31m-                    Text([m
+[31m-                      userName,[m
+[31m-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),[m
+[32m+[m[32m                boxShadow: [[m
+[32m+[m[32m                  BoxShadow([m
+[32m+[m[32m                    color: Colors.grey.withOpacity(0.3),[m
+[32m+[m[32m                    spreadRadius: 2,[m
+[32m+[m[32m                    blurRadius: 10,[m
+[32m+[m[32m                    offset: const Offset(0, 3),[m
+[32m+[m[32m                  ),[m
+[32m+[m[32m                ],[m
+[32m+[m[32m                borderRadius: const BorderRadius.vertical(bottom: Radius.circular

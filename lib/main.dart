@@ -11,6 +11,7 @@ import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
 import 'package:shop_ban_dong_ho/screens/faq.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
 import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
+import 'package:shop_ban_dong_ho/service/PushNotificationService.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
@@ -25,6 +26,10 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+  // Khởi tạo dịch vụ thông báo đẩy
+  await PushNotificationService().init();
+  
   runApp(ChangeNotifierProvider(create: (context) => Cart(), child: MyApp()));
 }
 
