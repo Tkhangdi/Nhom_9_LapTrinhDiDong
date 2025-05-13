@@ -4,13 +4,9 @@ import 'package:shop_ban_dong_ho/firebase_options.dart';
 import 'package:shop_ban_dong_ho/models/Cart.dart';
 import 'package:shop_ban_dong_ho/models/CartItem.dart';
 import 'package:shop_ban_dong_ho/screens/Favorite.dart';
-import 'package:shop_ban_dong_ho/screens/GioHang.dart';
 import 'package:shop_ban_dong_ho/screens/Info.dart';
-import 'package:shop_ban_dong_ho/screens/dangky.dart';
-import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
-import 'package:shop_ban_dong_ho/screens/faq.dart';
+import 'package:shop_ban_dong_ho/screens/gio_hang/gio_hang_screen.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
-import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
@@ -100,28 +96,31 @@ class _MyButtonNavigationBar extends State<MyButtonNavigationBar> {
   int _selectedIndex = 0;
   final List<CartItem> danhSachSanPham = []; // Thêm danh sách sản phẩm
 
-  late final List<Widget> _widgetOptions;
+  late List<Widget> _widgetOptions;
+  late List<PreferredSizeWidget> _widgetAppbar;
 
   @override
   void initState() {
     super.initState();
+
     _widgetOptions = [
-      TrangChu(),
-      Favorite(),
-      GioHang(
-        gioHang: Provider.of<Cart>(context, listen: false),
-        danhSachSanPham: danhSachSanPham,
+      TrangChu(key: trangChuKey),
+      const Favorite(),
+      const GioHangScreen(),
+      const Info(),
+    ];
+
+    _widgetAppbar = [
+      Appbarhome(
+        onSearch: (keyword) {
+          trangChuKey.currentState?.search(keyword);
+        },
       ),
-      Info(),
+      const Appbarfavorite(),
+      const AppbarshoppingCart(),
+      const Appbarinfo(),
     ];
   }
-
-  static const List<PreferredSizeWidget> _widgetAppbar = <PreferredSizeWidget>[
-    Appbarhome(),
-    Appbarfavorite(),
-    AppbarshoppingCart(),
-    Appbarinfo(),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {

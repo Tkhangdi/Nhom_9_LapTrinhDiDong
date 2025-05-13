@@ -1,65 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ban_dong_ho/widgets/headerparts.dart';
+import 'package:shop_ban_dong_ho/screens/loc_san_pham/bo_loc_san_pham.dart';
+import 'package:shop_ban_dong_ho/screens/trangchu.dart';
 
 class Appbarhome extends StatelessWidget implements PreferredSizeWidget {
-  const Appbarhome({super.key});
+  final Function(String) onSearch;
+
+  const Appbarhome({super.key, required this.onSearch});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return AppBar(
       backgroundColor:
           Theme.of(context).brightness == Brightness.dark
               ? Colors.black
               : Colors.white,
-      scrolledUnderElevation: 0,
       elevation: 0,
       title: Row(
         children: [
           Expanded(
-            flex: 1,
-            // Để TextField chiếm hết không gian có thể
-            child: Container(
-              height: 40, // Giới hạn chiều cao để không vượt quá AppBar
+            child: SizedBox(
+              height: 40,
               child: TextField(
-                cursorColor: Color.fromARGB(255, 120, 120, 120),
-                cursorWidth: 1,
+                onSubmitted: onSearch,
                 decoration: InputDecoration(
                   hintText: "Tìm kiếm...",
-
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(width: 1, color: Colors.black),
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 10,
-                  ), // Canh giữa nội dung
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8),
-                    ), // Bo góc nhẹ
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: const Color.fromARGB(255, 120, 120, 120),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(width: 1, color: Colors.black),
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
                 ),
               ),
             ),
           ),
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder:
+                    (_) => BoLocSanPham(
+                      onFilter: (brand, gia) {
+                        trangChuKey.currentState?.filterSanPham(
+                          brand,
+                          gia.start * 1000000,
+                          gia.end * 1000000,
+                        );
+                      },
+                    ),
+              );
+            },
+            icon: const Icon(Icons.filter_list, color: Colors.grey),
+          ),
+
           const SizedBox(width: 10),
           IconButton(
             onPressed: () {},
-            icon: Icon(
-              Icons.notifications,
-              color: const Color.fromARGB(255, 120, 120, 120),
-            ),
+            icon: const Icon(Icons.notifications, color: Colors.grey),
           ),
         ],
       ),
     );
   }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

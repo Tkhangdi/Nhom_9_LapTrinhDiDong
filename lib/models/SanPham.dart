@@ -38,7 +38,7 @@ class SanPham {
   });
 
   factory SanPham.fromJson(Map<String, dynamic> json) => SanPham(
-    maSP: json['maSP'],
+    maSP: json['maSp'],
     tenSanPham: json['tenSanPham'],
     gia: json['gia'],
     moTa: json['moTa'],
@@ -58,7 +58,7 @@ class SanPham {
   );
 
   Map<String, dynamic> toJson() => {
-    'maSP': maSP,
+    'maSp': maSP,
     'tenSanPham': tenSanPham,
     'gia': gia,
     'moTa': moTa,
@@ -76,4 +76,5 @@ class SanPham {
     'soLuongTon': soLuongTon,
     'soSaoTrungBinh': soSaoTrungBinh,
   };
+
 }
