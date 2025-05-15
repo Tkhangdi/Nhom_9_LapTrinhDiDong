@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ban_dong_ho/screens/dangky.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:shop_ban_dong_ho/screens/doimatkhau.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class QuenMatKhau extends StatefulWidget {
   const QuenMatKhau({super.key});
@@ -12,187 +12,110 @@ class QuenMatKhau extends StatefulWidget {
 }
 
 class _QuenMatKhauState extends State<QuenMatKhau> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _taiKhoanController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
+  bool _isLoading = false;
 
-  Future<Database> _openDatabase() async {
-    return openDatabase(
-      join(await getDatabasesPath(), 'khachhang.db'),
-      version: 1,
-    );
-  }
+  Future<void> _checkTaiKhoan() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  Future<bool> _isEmailExist(String email) async {
-    final db = await _openDatabase();
-    final List<Map<String, dynamic>> result = await db.query(
-      'users',
-      where: 'email = ?',
-      whereArgs: [email],
-    );
-    return result.isNotEmpty;
-  }
+    setState(() => _isLoading = true);
+    String taiKhoan = _taiKhoanController.text.trim();
 
-  Future<void> _resetPassword() async {
-    final email = _emailController.text.trim();
-    if (await _isEmailExist(email)) {
-      _scaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text(
-            'Email khôi phục mật khẩu đã được gửi!',
-            style: TextStyle(fontSize: 18.0),
+    try {
+      final query = await FirebaseFirestore.instance
+          .collection('khachhang')
+          .where('TaiKhoan', isEqualTo: taiKhoan)
+          .limit(1)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        final userDoc = query.docs.first;
+        final userId = userDoc.id;
+        final email = userDoc['email'];
+
+        bool? confirm = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Xác nhận'),
+            content: Text(
+              'Tài khoản $taiKhoan được tìm thấy với email $email.\nBạn có muốn đổi mật khẩu không?',
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Hủy')),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Đồng ý')),
+            ],
           ),
-        ),
+        );
+
+        if (confirm == true) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DoiMatKhau(userId: userId)),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Không tìm thấy tài khoản với tên này.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đã xảy ra lỗi, thử lại sau.')),
       );
-    } else {
-      _scaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text(
-            'Không tìm thấy tài khoản với email này.',
-            style: TextStyle(fontSize: 18.0),
-          ),
-        ),
-      );
+    } finally {
+      setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _taiKhoanController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldMessengerKey,
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text("Quên mật khẩu"),
+        backgroundColor: AppColors.primary,
+      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 70.0),
-            const Text(
-              'KHÔI PHỤC MẬT KHẨU',
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Text(
+                "Nhập tài khoản của bạn để đổi mật khẩu",
+                style: TextStyle(fontSize: 16),
               ),
-            ),
-            const SizedBox(height: 10.0),
-            const Text(
-              'Nhập email của bạn',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _taiKhoanController,
+                decoration: InputDecoration(
+                  labelText: "Tài khoản",
+                  prefixIcon: Icon(Icons.person, color: AppColors.primary),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Vui lòng nhập tài khoản';
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 20.0),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      controller: _emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Vui lòng nhập email';
-                        }
-                        return null;
-                      },
-                      style: const TextStyle(color: Colors.black),
-                      decoration: const InputDecoration(
-                        hintText: 'Email',
-                        hintStyle: TextStyle(
-                          fontSize: 18.0,
-                          color: AppColors.primary,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.email,
-                          color: AppColors.primary,
-                          size: 30.0,
-                        ),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 40.0),
-                  GestureDetector(
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        _resetPassword();
-                      }
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary,
-                            spreadRadius: 2,
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Gửi email',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 50.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Chưa có tài khoản?',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 5.0),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => DangKy()),
-                          );
-                        },
-                        child: const Text(
-                          'Tạo tài khoản',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _checkTaiKhoan,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                ),
+                child: _isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text("TIẾP TỤC", style: TextStyle(fontSize: 16)),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

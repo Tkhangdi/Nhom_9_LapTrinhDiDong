@@ -1,4 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shop_ban_dong_ho/firebase_options.dart';
+
 import 'package:shop_ban_dong_ho/screens/Favorite.dart';
 import 'package:shop_ban_dong_ho/screens/GioHang.dart';
 import 'package:shop_ban_dong_ho/screens/Info.dart';
@@ -7,14 +10,21 @@ import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
 import 'package:shop_ban_dong_ho/screens/faq.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
 import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
+
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarInfo.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarShopping_cart.dart';
-import 'package:shop_ban_dong_ho/widgets/headerparts.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+// void main() {
+//   runApp(const MyApp());
+// }
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -26,9 +36,9 @@ class MyApp extends StatelessWidget {
       title: "APP BAN DONG HO",
       debugShowCheckedModeBanner: false,
       //home: MyButtonNavigationBar(),
-      // home: DangKy(),
+      home: DangKy(),
       //home: XacThucOTP(soDienThoai: '122332233'),
-      home: HelpCenterScreen(),
+      // home: DangNhap(),
     );
   }
 }
