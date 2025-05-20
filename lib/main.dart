@@ -8,7 +8,11 @@ import 'package:shop_ban_dong_ho/screens/Info.dart';
 import 'package:shop_ban_dong_ho/screens/gio_hang/gio_hang_screen.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
 import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
+<<<<<<< HEAD
 
+=======
+import 'package:shop_ban_dong_ho/service/PushNotificationService.dart';
+>>>>>>> thanhtruong
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
@@ -23,6 +27,10 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+  // Khởi tạo dịch vụ thông báo đẩy
+  await PushNotificationService().init();
+  
   runApp(ChangeNotifierProvider(create: (context) => Cart(), child: MyApp()));
 }
 
