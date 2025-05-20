@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_ban_dong_ho/screens/thongbao.dart';// Import màn hình thông báo
+import 'package:shop_ban_dong_ho/screens/quanlydonhang.dart';
+import 'package:shop_ban_dong_ho/screens/thongbao.dart'; // Import màn hình thông báo
 import 'package:shop_ban_dong_ho/screens/thongtinnguoidung.dart';
 
 void main() {
@@ -57,10 +58,26 @@ class Info extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const MyAccountScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const MyAccountScreen(),
+                        ),
                       );
                     },
                   ),
+                  buildMenuItem(
+                    context,
+                    icon: Icons.shopping_bag_outlined,
+                    text: "Đơn hàng của tôi",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const QuanLyDonHangScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
                   buildMenuItem(
                     context,
                     icon: Icons.notifications_outlined,
@@ -68,7 +85,9 @@ class Info extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const NotificationScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationScreen(),
+                        ),
                       );
                     },
                   ),
@@ -77,6 +96,7 @@ class Info extends StatelessWidget {
                     icon: Icons.settings,
                     text: "Settings",
                   ),
+
                   buildMenuItem(
                     context,
                     icon: Icons.help_outline,
@@ -97,12 +117,18 @@ class Info extends StatelessWidget {
     );
   }
 
-  Widget buildMenuItem(BuildContext context,
-      {required IconData icon, required String text, Color color = Colors.black, VoidCallback? onTap}) {
+  Widget buildMenuItem(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+    Color color = Colors.black,
+    VoidCallback? onTap,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: InkWell(
-        onTap: onTap ??
+        onTap:
+            onTap ??
             () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("$text chưa được phát triển.")),
@@ -121,7 +147,11 @@ class Info extends StatelessWidget {
               Expanded(
                 child: Text(
                   text,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: color),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                  ),
                 ),
               ),
               const Icon(Icons.lock, size: 16, color: Colors.grey),
