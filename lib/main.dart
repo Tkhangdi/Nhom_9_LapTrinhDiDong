@@ -1,8 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_ban_dong_ho/firebase_options.dart';
+<<<<<<< HEAD
 import 'package:shop_ban_dong_ho/models/Cart.dart';
 import 'package:shop_ban_dong_ho/models/CartItem.dart';
+=======
+
+>>>>>>> hongha
 import 'package:shop_ban_dong_ho/screens/Favorite.dart';
 import 'package:shop_ban_dong_ho/screens/GioHang.dart';
 import 'package:shop_ban_dong_ho/screens/Info.dart';
@@ -11,6 +15,7 @@ import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
 import 'package:shop_ban_dong_ho/screens/faq.dart';
 import 'package:shop_ban_dong_ho/screens/trangchu.dart';
 import 'package:shop_ban_dong_ho/screens/XacThucOTP.dart';
+
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarFavorite.dart';
 import 'package:shop_ban_dong_ho/widgets/Appbar/appBarHome.dart';
@@ -25,7 +30,11 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+<<<<<<< HEAD
   runApp(ChangeNotifierProvider(create: (context) => Cart(), child: MyApp()));
+=======
+  runApp(const MyApp());
+>>>>>>> hongha
 }
 
 class MyApp extends StatelessWidget {
@@ -36,8 +45,9 @@ class MyApp extends StatelessWidget {
       title: "APP BAN DONG HO",
       debugShowCheckedModeBanner: false,
       //home: MyButtonNavigationBar(),
-      // home: DangKy(),
+      home: DangKy(),
       //home: XacThucOTP(soDienThoai: '122332233'),
+<<<<<<< HEAD
       home: MyButtonNavigationBar(),
       theme: ThemeData(
         primaryColor: Colors.orange,
@@ -84,6 +94,9 @@ class MyApp extends StatelessWidget {
         ),
       ),
       themeMode: ThemeMode.light,
+=======
+      // home: DangNhap(),
+>>>>>>> hongha
     );
   }
 }

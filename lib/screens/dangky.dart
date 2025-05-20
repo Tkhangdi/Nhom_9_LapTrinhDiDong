@@ -1,8 +1,7 @@
-import 'package:shop_ban_dong_ho/models/KhachHang.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shop_ban_dong_ho/screens/dangnhap.dart';
 import 'package:shop_ban_dong_ho/utils/app_colors.dart';
-import 'package:shop_ban_dong_ho/utils/data.dart';
-import 'package:flutter/material.dart';
 
 class DangKy extends StatefulWidget {
   const DangKy({super.key});
@@ -14,121 +13,124 @@ class DangKy extends StatefulWidget {
 class _DangKyState extends State<DangKy> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController hotenkhController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController TaiKhoanController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController ngaysinhController = TextEditingController();
   final TextEditingController sdtController = TextEditingController();
   final TextEditingController diachiController = TextEditingController();
+  final TextEditingController emailController =
+      TextEditingController(); // Thêm trường email
   String _selectedgioitinh = 'Nam';
 
-  bool KiemTraEmail(String email) {
-    final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@gmail\.com$');
-    return regex.hasMatch(email);
+  // Kiểm tra tài khoản
+  bool _validateTaiKhoan(String value) {
+    final regex = RegExp(r'^[a-zA-Z0-9]{6,}$');
+    return regex.hasMatch(value);
   }
 
-  bool KiemTraSDT(String sdt) {
+  // Kiểm tra số điện thoại hợp lệ
+  bool _validateSDT(String value) {
     final regex = RegExp(r'^(0[3-9])\d{8}$');
-    return regex.hasMatch(sdt);
+    return regex.hasMatch(value);
   }
 
-  bool KiemTraMatKhau(String password) {
+  // Kiểm tra mật khẩu
+  bool _validatePassword(String value) {
     final regex = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,}$');
-    return regex.hasMatch(password);
+    return regex.hasMatch(value);
   }
 
-  bool KiemTraNgaySinh(String ngaysinh) {
-    try {
-      DateTime ngaysinhTime = DateTime.parse(ngaysinh);
-      DateTime today = DateTime.now();
-      int age = today.year - ngaysinhTime.year;
-      if (today.month < ngaysinhTime.month ||
-          (today.month == ngaysinhTime.month && today.day < ngaysinhTime.day)) {
-        age--;
-      }
-      return age >= 16;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> isEmailUnique(String email) async {
-    DuLieu db = DuLieu();
-    var existingUsers = await db.getUsersByEmail(email);
-    return existingUsers.isEmpty;
+  // Kiểm tra email hợp lệ
+  bool _validateEmail(String value) {
+    final regex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    return regex.hasMatch(value);
   }
 
   Future<void> _signUp() async {
     if (_formKey.currentState!.validate()) {
-      String? validationMessage = await _validateFields();
-      if (validationMessage != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(validationMessage)));
-        return;
-      }
-
       String userId =
           'KH${DateTime.now().day.toString().padLeft(2, '0')}${DateTime.now().month.toString().padLeft(2, '0')}${DateTime.now().year.toString().substring(2)}01';
 
-      KhachHang user = KhachHang(
-        id: userId,
-        hotenkh: hotenkhController.text,
-        email: emailController.text,
-        password: passwordController.text,
-        gioitinh: _selectedgioitinh,
-        ngaysinh: ngaysinhController.text,
-        sdt: sdtController.text,
-        diachi: diachiController.text,
-      );
-
       try {
-        DuLieu db = DuLieu();
-        await db.insertUser(user.toMap());
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Đăng ký thành công! Bạn có thể đăng nhập ngay'),
-          ),
-        );
-        Navigator.pushReplacement(
+        // Kiểm tra xem tài khoản đã tồn tại chưa
+        QuerySnapshot snapshot =
+            await FirebaseFirestore.instance
+                .collection('khachhang')
+                .where('TaiKhoan', isEqualTo: TaiKhoanController.text)
+                .get();
+
+        if (snapshot.docs.isNotEmpty) {
+          // Tài khoản đã tồn tại
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Tài khoản này đã tồn tại!')));
+          return; // Dừng quá trình đăng ký
+        }
+
+        // Kiểm tra xem email đã tồn tại chưa
+        QuerySnapshot emailSnapshot =
+            await FirebaseFirestore.instance
+                .collection('khachhang')
+                .where('email', isEqualTo: emailController.text)
+                .get();
+
+        if (emailSnapshot.docs.isNotEmpty) {
+          // Email đã tồn tại
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Email này đã được đăng ký!')));
+          return; // Dừng quá trình đăng ký
+        }
+
+        // Nếu tài khoản và email chưa tồn tại, tiếp tục đăng ký
+        await FirebaseFirestore.instance.collection('khachhang').doc().set({
+          'id': userId,
+          'hotenkh': hotenkhController.text,
+          'TaiKhoan': TaiKhoanController.text,
+          'matkhau': passwordController.text,
+          'gioitinh': _selectedgioitinh,
+          'ngaysinh': ngaysinhController.text,
+          'sdt': sdtController.text,
+          'diachi': diachiController.text,
+          'email': emailController.text, // Lưu email vào Firestore
+        });
+
+        // Hiển thị thông báo thành công
+        ScaffoldMessenger.of(
           context,
-          MaterialPageRoute(builder: (context) => DangNhap()),
-        );
+        ).showSnackBar(SnackBar(content: Text('Đăng ký thành công!')));
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Đã có lỗi xảy ra khi đăng ký. Vui lòng thử lại sau!',
-            ),
-          ),
-        );
-        print("Error during user registration: $e");
+        print("Error during sign-up: $e");
+        print("Error type: ${e.runtimeType}");
+
+        // Kiểm tra lỗi nếu có lỗi liên quan đến Firestore
+        if (e is FirebaseException) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Lỗi Firestore: ${e.message}')),
+          );
+        } else {
+          // Xử lý các lỗi không xác định
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Lỗi không xác định: $e')));
+          print("Detailed error: ${e.toString()}");
+        }
       }
     }
   }
 
-  Future<String?> _validateFields() async {
-    if (!KiemTraEmail(emailController.text)) {
-      return 'Email phải có định dạng đúng, ví dụ: abc@gmail.com';
-    }
-
-    bool emailUnique = await isEmailUnique(emailController.text);
-    if (!emailUnique) {
-      return 'Email này đã được sử dụng! Vui lòng chọn email khác';
-    }
-
-    if (!KiemTraMatKhau(passwordController.text)) {
-      return 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ hoa, 1 chữ thường và 1 số.';
-    }
-
-    if (!KiemTraNgaySinh(ngaysinhController.text)) {
-      return 'Bạn phải ít nhất 16 tuổi để đăng ký!';
-    }
-
-    if (!KiemTraSDT(sdtController.text)) {
-      return 'Số điện thoại không hợp lệ. Vui lòng nhập đủ 10 chữ số.';
-    }
-
-    return null;
+  // Reset form
+  void _resetForm() {
+    hotenkhController.clear();
+    TaiKhoanController.clear();
+    passwordController.clear();
+    ngaysinhController.clear();
+    sdtController.clear();
+    diachiController.clear();
+    emailController.clear(); // Reset trường email
+    setState(() {
+      _selectedgioitinh = 'Nam';
+    });
   }
 
   Future<void> _selectngaysinh(BuildContext context) async {
@@ -145,235 +147,218 @@ class _DangKyState extends State<DangKy> {
     }
   }
 
-  Widget _buildTextField(
-    TextEditingController controller,
-    String hintText,
-    IconData icon, {
-    bool obscureText = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: TextFormField(
-        controller: controller,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Vui lòng nhập $hintText';
-          }
-          return null;
-        },
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          hintText: hintText,
-          labelText: hintText,
-          prefixIcon: Icon(icon, color: AppColors.primary),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.primary, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.primary, width: 2),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDropdown() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: DropdownButtonFormField<String>(
-        value: _selectedgioitinh,
-        decoration: InputDecoration(
-          labelText: 'Giới tính',
-          labelStyle: TextStyle(color: AppColors.primary),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.primary, width: 1),
-          ),
-        ),
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedgioitinh = newValue!;
-          });
-        },
-        items:
-            <String>['Nam', 'Nữ', 'Khác'].map<DropdownMenuItem<String>>((
-              String value,
-            ) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildngaysinhField() {
-    return GestureDetector(
-      onTap: () => _selectngaysinh(context),
-      child: AbsorbPointer(
-        child: TextFormField(
-          controller: ngaysinhController,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Vui lòng nhập ngày sinh';
-            }
-            return null;
-          },
-          decoration: InputDecoration(
-            hintText: 'Ngày sinh',
-            prefixIcon: Icon(Icons.calendar_today, color: AppColors.primary),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.primary, width: 1),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSignUpButton() {
-    return GestureDetector(
-      onTap: _signUp,
-      child: Material(
-        elevation: 5.0,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 12.0),
-          width: 200,
-          decoration: BoxDecoration(color: AppColors.primary),
-          child: Center(
-            child: Text(
-              "ĐĂNG KÝ",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Stack(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 2.5,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.primary, AppColors.primary],
-                ),
-              ),
+      appBar: AppBar(
+        title: const Text("Đăng ký"),
+        backgroundColor: AppColors.primary,
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Center(
+          child: Card(
+            elevation: 8.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0),
             ),
-            Container(
-              margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height / 3,
-              ),
-              height: MediaQuery.of(context).size.height / 2,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
-              child: Column(
-                children: [
-                  Center(
-                    child: Image.asset(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Image.asset(
                       "assets/images/Logo.jpg",
                       width: MediaQuery.of(context).size.width / 2,
                       height: 150,
                       fit: BoxFit.contain,
                     ),
-                  ),
-                  SizedBox(height: 50.0),
-                  Material(
-                    elevation: 5.0,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 2,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: hotenkhController,
+                      decoration: InputDecoration(
+                        labelText: "Họ và tên",
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: AppColors.primary,
+                        ),
+                        border: OutlineInputBorder(),
                       ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            SizedBox(height: 30.0),
-                            Text(
-                              "ĐĂNG KÝ",
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.secondary,
-                              ),
-                            ),
-                            SizedBox(height: 30.0),
-                            _buildTextField(
-                              hotenkhController,
-                              'Tên',
-                              Icons.person_outlined,
-                            ),
-                            _buildTextField(
-                              emailController,
-                              'Email',
-                              Icons.email_outlined,
-                            ),
-                            _buildTextField(
-                              passwordController,
-                              'Mật khẩu',
-                              Icons.lock_outline,
-                              obscureText: true,
-                            ),
-                            _buildDropdown(),
-                            _buildTextField(
-                              sdtController,
-                              'Số điện thoại',
-                              Icons.phone,
-                            ),
-                            _buildngaysinhField(),
-                            SizedBox(height: 40.0),
-                            _buildSignUpButton(),
-                            SizedBox(height: 20.0),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DangNhap(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                "Đã có tài khoản? Đăng nhập",
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Vui lòng nhập họ và tên'
+                                  : null,
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: TaiKhoanController,
+                      decoration: InputDecoration(
+                        labelText: "Tài khoản",
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: AppColors.primary,
+                        ),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vui lòng nhập tài khoản';
+                        } else if (!_validateTaiKhoan(value)) {
+                          return 'Tài khoản phải có ít nhất 6 ký tự và chỉ chứa chữ cái và số';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: "Mật khẩu",
+                        prefixIcon: Icon(Icons.lock, color: AppColors.primary),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Vui lòng nhập mật khẩu';
+                        else if (!_validatePassword(value))
+                          return 'Mật khẩu phải có chữ hoa, chữ thường, số và ít nhất 6 ký tự';
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    // Thêm trường email vào đây
+                    TextFormField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        labelText: "Email",
+                        prefixIcon: Icon(Icons.email, color: AppColors.primary),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vui lòng nhập email';
+                        } else if (!_validateEmail(value)) {
+                          return 'Email không hợp lệ';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: _selectedgioitinh,
+                      decoration: InputDecoration(
+                        labelText: 'Giới tính',
+                        border: OutlineInputBorder(),
+                      ),
+                      items:
+                          ['Nam', 'Nữ']
+                              .map(
+                                (gt) => DropdownMenuItem(
+                                  value: gt,
+                                  child: Text(gt),
                                 ),
-                              ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedgioitinh = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: sdtController,
+                      decoration: InputDecoration(
+                        labelText: "Số điện thoại",
+                        prefixIcon: Icon(Icons.phone, color: AppColors.primary),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Vui lòng nhập số điện thoại';
+                        else if (!_validateSDT(value))
+                          return 'Số điện thoại không hợp lệ';
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () => _selectngaysinh(context),
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          controller: ngaysinhController,
+                          decoration: InputDecoration(
+                            labelText: "Ngày sinh",
+                            prefixIcon: Icon(
+                              Icons.calendar_today,
+                              color: AppColors.primary,
                             ),
-                          ],
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty)
+                              return 'Vui lòng chọn ngày sinh';
+                            return null;
+                          },
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: diachiController,
+                      decoration: InputDecoration(
+                        labelText: "Địa chỉ",
+                        prefixIcon: Icon(Icons.home, color: AppColors.primary),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Vui lòng nhập địa chỉ'
+                                  : null,
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _signUp,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                          ),
+                          child: Text("ĐĂNG KÝ"),
+                        ),
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: _resetForm,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondary,
+                          ),
+                          child: Text("ĐẶT LẠI"),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => DangNhap()),
+                        );
+                      },
+                      child: Text(
+                        "Đã có tài khoản? Đăng nhập ngay",
+                        style: TextStyle(color: AppColors.primary),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
